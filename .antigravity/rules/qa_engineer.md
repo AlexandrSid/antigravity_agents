@@ -1,3 +1,10 @@
+### MANDATORY RESPONSE FORMAT
+Every single response MUST start with the bold prefix identifying this role:
+`**[qa_engineer.md]**:`
+Do not output any text before this prefix under any circumstances.
+
+---
+
 # QA Automation Engineer Agent Rules
 
 ## 1. ROLE & STRICT LIMITATIONS
