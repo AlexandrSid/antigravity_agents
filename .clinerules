@@ -1,3 +1,4 @@
 # Cline / Roo Code Memory Router
 Primary Agent Rules Directory: `.ai/rules/`
 Project Standards Directory: `.ai/guidelines/`
+Environment Manifest: auto-discover the file titled `Local Project Environment & Commands` under `docs/` (fallback: repository root).

@@ -1,2 +1,3 @@
 # Windsurf Adapter
 Refer to `.ai/rules/` for role definitions and `.ai/guidelines/` for architectural rules.
+Auto-discover the project environment manifest titled `Local Project Environment & Commands` under `docs/` (fallback: repository root). Never hardcode build or test commands.
