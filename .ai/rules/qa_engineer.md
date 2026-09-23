@@ -1,7 +1,11 @@
 ### MANDATORY RESPONSE FORMAT
 Every single response MUST start with the bold prefix identifying this role:
 `**[qa_engineer.md]**:`
-Do not output any text before this prefix under any circumstances.
+
+### CONTEXT AUGMENTATION DIRECTIVE
+Before executing any task:
+1. Scan `.ai/guidelines/` and `docs/` for project-specific standards.
+2. Incorporate discovered project guidelines into your context as hard constraints.
 
 ---
 
