@@ -16,6 +16,8 @@
 - **Run All Tests**: `.\gradlew.bat test`
 - **Run Single Test**: `.\gradlew.bat test --tests "{test_class}"`
 - **Database Migration**: `.\gradlew.bat flywayMigrate`
+- **Compile Integration Tests**: `.\gradlew.bat integrationTestClasses`
+- **Run Integration / E2E Gate**: `.\scripts\run-integration-e2e.ps1`
 
 ## Runtime Commands
 - **Start Local Database**: `docker compose up -d h2-db`
@@ -28,3 +30,5 @@
 - `Compile / Build Check` uses `testClasses` so both production and test type surfaces are compiled without executing tests.
 - `Run All Tests` is reserved for the in-memory Unit/Slice suite described by `TDD_PLAN.md` Section 1.
 - `Database Migration` requires the H2 TCP service to be running first.
+- `Run Integration / E2E Gate` owns Docker image build, unique Compose project creation, clean-volume startup, readiness, Section 2 tests, restart-persistence verification, diagnostics, and cleanup.
+- A failing Integration/E2E assertion must never be retried to obtain green. Bounded retry is allowed only after a diagnosed external Docker registry, DNS, or startup transient.

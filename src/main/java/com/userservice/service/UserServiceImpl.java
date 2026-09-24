@@ -14,7 +14,12 @@ import com.userservice.dto.UserResponse;
 import com.userservice.dto.UserUpdateRequest;
 import com.userservice.repository.AddressRepository;
 import com.userservice.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,16 +28,30 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private static final String PHONE_PATTERN = "\\+[1-9]\\d{6,14}";
 
+    private static final String ADDRESS_KEY_SEPARATOR = "\u001f";
+
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final TransactionTemplate newAddressTransaction;
 
-    public UserServiceImpl(UserRepository userRepository, AddressRepository addressRepository) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            AddressRepository addressRepository,
+            PlatformTransactionManager transactionManager
+    ) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        if (transactionManager == null) {
+            this.newAddressTransaction = null;
+        } else {
+            this.newAddressTransaction = new TransactionTemplate(transactionManager);
+            this.newAddressTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        }
     }
 
     @Override
@@ -194,16 +213,56 @@ public class UserServiceImpl implements UserService {
         String apartment = normalizeText(address.apartment());
         String postalCode = normalizeText(address.postalCode());
         return addressRepository.findMatchingNormalized(country, city, street, building, apartment, postalCode)
-                .orElseGet(() -> {
-                    Address created = new Address();
-                    created.setCountry(country);
-                    created.setCity(city);
-                    created.setStreet(street);
-                    created.setBuilding(building);
-                    created.setApartment(apartment);
-                    created.setPostalCode(postalCode);
-                    return addressRepository.save(created);
-                });
+                .orElseGet(() -> insertAddress(country, city, street, building, apartment, postalCode));
+    }
+
+    private Address insertAddress(
+            String country,
+            String city,
+            String street,
+            String building,
+            String apartment,
+            String postalCode
+    ) {
+        Address created = new Address();
+        created.setCountry(country);
+        created.setCity(city);
+        created.setStreet(street);
+        created.setBuilding(building);
+        created.setApartment(apartment);
+        created.setPostalCode(postalCode);
+        try {
+            if (newAddressTransaction == null) {
+                return saveAddress(created);
+            }
+            return newAddressTransaction.execute(status -> saveAddress(created));
+        } catch (DataIntegrityViolationException exception) {
+            return addressRepository.findByNormalizedText(addressKey(country, city, street, building, apartment, postalCode))
+                    .orElseThrow(() -> exception);
+        }
+    }
+
+    private Address saveAddress(Address created) {
+        Address saved = addressRepository.save(created);
+        addressRepository.flush();
+        return saved;
+    }
+
+    private static String addressKey(
+            String country,
+            String city,
+            String street,
+            String building,
+            String apartment,
+            String postalCode
+    ) {
+        return String.join(ADDRESS_KEY_SEPARATOR,
+                country.toLowerCase(Locale.ROOT),
+                city.toLowerCase(Locale.ROOT),
+                street.toLowerCase(Locale.ROOT),
+                building.toLowerCase(Locale.ROOT),
+                apartment == null ? "" : apartment.toLowerCase(Locale.ROOT),
+                postalCode == null ? "" : postalCode.toLowerCase(Locale.ROOT));
     }
 
     private UserResponse toResponse(User user) {

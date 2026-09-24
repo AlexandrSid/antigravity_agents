@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
+    Optional<Address> findByNormalizedText(String normalizedText);
+
     @Query("""
             SELECT a FROM Address a
             WHERE LOWER(a.country) = LOWER(:country)

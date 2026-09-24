@@ -38,4 +38,7 @@ public class Address {
 
     @Column(name = "postal_code", length = 20)
     private String postalCode;
+
+    @Column(name = "normalized_text", insertable = false, updatable = false, length = 500)
+    private String normalizedText;
 }

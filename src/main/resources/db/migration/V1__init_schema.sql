@@ -5,7 +5,13 @@ CREATE TABLE addresses (
     street VARCHAR(150) NOT NULL,
     building VARCHAR(50) NOT NULL,
     apartment VARCHAR(50),
-    postal_code VARCHAR(20)
+    postal_code VARCHAR(20),
+    normalized_text VARCHAR(500)
+        GENERATED ALWAYS AS (
+            LOWER(country) || CHR(31) || LOWER(city) || CHR(31) ||
+            LOWER(street) || CHR(31) || LOWER(building) || CHR(31) ||
+            COALESCE(LOWER(apartment), '') || CHR(31) || COALESCE(LOWER(postal_code), '')
+        )
 );
 
 CREATE TABLE users (
@@ -28,6 +34,7 @@ CREATE TABLE users (
     CONSTRAINT fk_users_mother FOREIGN KEY (mother_id) REFERENCES users(id)
 );
 
+CREATE UNIQUE INDEX ux_addresses_normalized_text ON addresses(normalized_text);
 CREATE UNIQUE INDEX ux_users_active_email ON users(active_email);
 CREATE UNIQUE INDEX ux_users_active_phone ON users(active_phone);
 CREATE INDEX ix_users_father ON users(father_id);
