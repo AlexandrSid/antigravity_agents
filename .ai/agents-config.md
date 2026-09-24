@@ -30,8 +30,9 @@
 | **06** | **Code Writer** | `.ai/rules/code-writer.md` | `STRICT_CODEGEN` | Реализация бизнес-логики до прохождения модульного контрольного этапа. |
 | **07** | **Integration Test Writer** | `.ai/rules/integration-test-writer.md` | `STRICT_CODEGEN` | Создание Docker-backed DB/Flyway/HTTP-набора и классификация отказов интеграционного контрольного этапа. |
 | **08** | **Integration Code Writer** | `.ai/rules/integration-code-writer.md` | `STRICT_CODEGEN` | Исправление продуктового кода и инфраструктуры при неизменяемом Integration/E2E-наборе. |
+| **09** | **Documenter** | `.ai/rules/documenter.md` | `FAST_EXECUTION` | Формирование точной человекочитаемой документации по завершённым артефактам и подтверждённым результатам проверок. |
 
-Роль **Planner** (`.ai/rules/planner.md`, профиль `REASONING_HEAVY`) выполняет предпайплайновое выявление требований и формирует `docs/PRD.md`; она не входит в нумерованные шаги 01–08.
+Роль **Planner** (`.ai/rules/planner.md`, профиль `REASONING_HEAVY`) выполняет предпайплайновое выявление требований и формирует `docs/PRD.md`; она не входит в нумерованные шаги 01–09.
 
 ---
 
