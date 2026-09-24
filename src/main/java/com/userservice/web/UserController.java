@@ -5,6 +5,8 @@ import com.userservice.dto.UserResponse;
 import com.userservice.dto.UserUpdateRequest;
 import com.userservice.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,31 +32,35 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponse> create(@Valid @RequestBody UserCreateRequest request) {
-        throw new UnsupportedOperationException("Not implemented");
+        UserResponse created = userService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.LOCATION, "/api/v1/users/" + created.id())
+                .body(created);
     }
 
     @GetMapping("/{id}")
     public UserResponse getById(@PathVariable Long id) {
-        throw new UnsupportedOperationException("Not implemented");
+        return userService.getById(id);
     }
 
     @PutMapping("/{id}")
     public UserResponse update(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request) {
-        throw new UnsupportedOperationException("Not implemented");
+        return userService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        throw new UnsupportedOperationException("Not implemented");
+        userService.softDelete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/by-email")
     public UserResponse getByEmail(@RequestParam("email") String email) {
-        throw new UnsupportedOperationException("Not implemented");
+        return userService.getByEmail(email);
     }
 
     @GetMapping("/{id}/family")
     public List<UserResponse> getDirectFamily(@PathVariable Long id) {
-        throw new UnsupportedOperationException("Not implemented");
+        return userService.getDirectFamily(id);
     }
 }
