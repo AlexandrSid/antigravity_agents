@@ -81,8 +81,8 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Implement minimal user creation, lowercase email normalization, save, reload/map, and empty `childrenIds`.
 - **Target Signature**: `UserServiceImpl#create(UserCreateRequest): UserResponse`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `create_requiredFields_normalizesEmailAndReturnsPersistedUser` — configure uniqueness checks `false`, `save` to return an entity with generated ID, and active children `[]`; assert lowercase email and generated ID.
-  - [ ] Red Test: `create_requiredFields_keepsAbsentOptionalsOmittedAndChildrenEmpty` — assert phone/address/parents are null in the DTO model and `childrenIds=[]`.
+  - [x] Red Test: `create_requiredFields_normalizesEmailAndReturnsPersistedUser` — configure uniqueness checks `false`, `save` to return an entity with generated ID, and active children `[]`; assert lowercase email and generated ID.
+  - [x] Red Test: `create_requiredFields_keepsAbsentOptionalsOmittedAndChildrenEmpty` — assert phone/address/parents are null in the DTO model and `childrenIds=[]`.
 - **Mock Behavior Guidance**: Stub every repository call (`exists`, `save`, `findActiveChildren`) with non-null values. The initial failure must be `UnsupportedOperationException` from `UserServiceImpl#create`.
 - **Green Phase Guidance**:
   - [ ] Green: Normalize email using locale-independent lowercase, create an active entity, save it, and map the persisted entity to `UserResponse`.
@@ -91,11 +91,11 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Normalize formatted phone input to E.164 and enforce active email/phone uniqueness.
 - **Target Signature**: `UserServiceImpl#create(UserCreateRequest): UserResponse`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `create_formattedPhone_persistsCanonicalE164` — formatted input with spaces/parentheses/separators becomes `+{countryCode}{number}`.
-  - [ ] Red Test: `create_nonNormalizablePhone_throwsValidationFailure` — letters, missing `+`, country code starting zero, or normalized length outside 7–15 digits is rejected.
-  - [ ] Red Test: `create_duplicateNormalizedEmail_throwsDuplicateEmail` — repository reports active lowercase collision; save is never called.
-  - [ ] Red Test: `create_duplicateNormalizedPhone_throwsDuplicatePhone` — different formatting normalizes to an active collision; save is never called.
-  - [ ] Red Test: `create_identityUsedOnlyByDeletedUser_isAllowed` — active existence checks return false and save succeeds.
+  - [x] Red Test: `create_formattedPhone_persistsCanonicalE164` — formatted input with spaces/parentheses/separators becomes `+{countryCode}{number}`.
+  - [x] Red Test: `create_nonNormalizablePhone_throwsValidationFailure` — letters, missing `+`, country code starting zero, or normalized length outside 7–15 digits is rejected.
+  - [x] Red Test: `create_duplicateNormalizedEmail_throwsDuplicateEmail` — repository reports active lowercase collision; save is never called.
+  - [x] Red Test: `create_duplicateNormalizedPhone_throwsDuplicatePhone` — different formatting normalizes to an active collision; save is never called.
+  - [x] Red Test: `create_identityUsedOnlyByDeletedUser_isAllowed` — active existence checks return false and save succeeds.
 - **Mock Behavior Guidance**: Stub both email and phone existence checks explicitly in every happy/conflict scenario.
 - **Green Phase Guidance**:
   - [ ] Green: Add canonical phone normalization/validation and active-only conflict checks before persistence.
@@ -104,10 +104,10 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Normalize address whitespace, compare all six fields case-insensitively, reuse exact matches, and insert on any difference.
 - **Target Signature**: `UserServiceImpl#create` and `UserServiceImpl#update`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `create_addressWhitespaceAndCaseVariant_reusesExistingAddress` — repository match returns an existing address; `AddressRepository#save` is never called.
-  - [ ] Red Test: `create_anyAddressDetailDiffers_insertsNewAddress` — include a postal-code-only difference; match is empty and save returns a generated address.
-  - [ ] Red Test: `update_newAddress_relinksOnlyTargetAndNeverMutatesOldAddress` — user save receives the new link; no old-address save/update/delete occurs.
-  - [ ] Red Test: `update_nullAddress_unlinksTarget` — replacement writes null `address`.
+  - [x] Red Test: `create_addressWhitespaceAndCaseVariant_reusesExistingAddress` — repository match returns an existing address; `AddressRepository#save` is never called.
+  - [x] Red Test: `create_anyAddressDetailDiffers_insertsNewAddress` — include a postal-code-only difference; match is empty and save returns a generated address.
+  - [x] Red Test: `update_newAddress_relinksOnlyTargetAndNeverMutatesOldAddress` — user save receives the new link; no old-address save/update/delete occurs.
+  - [x] Red Test: `update_nullAddress_unlinksTarget` — replacement writes null `address`.
 - **Mock Behavior Guidance**: Stub exact address match and address save outcomes; stub user save and active children for response mapping.
 - **Green Phase Guidance**:
   - [ ] Green: Implement trim/whitespace collapse, case-insensitive six-field match lookup, match-or-insert, and user relinking without mutating address rows.
@@ -116,11 +116,11 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Resolve active parents and reject missing, soft-deleted, same-role, and self-parent assignments.
 - **Target Signature**: `UserServiceImpl#create` and `UserServiceImpl#update`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `create_activeParents_linksFatherAndMother`.
-  - [ ] Red Test: `create_missingOrDeletedParent_throwsParentNotFound`.
-  - [ ] Red Test: `create_sameFatherAndMother_throwsInvalidParentRelationship`.
-  - [ ] Red Test: `update_selfAsFatherOrMother_throwsInvalidParentRelationship`.
-  - [ ] Red Test: `update_nullParents_unlinksBothParents`.
+  - [x] Red Test: `create_activeParents_linksFatherAndMother`.
+  - [x] Red Test: `create_missingOrDeletedParent_throwsParentNotFound`.
+  - [x] Red Test: `create_sameFatherAndMother_throwsInvalidParentRelationship`.
+  - [x] Red Test: `update_selfAsFatherOrMother_throwsInvalidParentRelationship`.
+  - [x] Red Test: `update_nullParents_unlinksBothParents`.
 - **Mock Behavior Guidance**: Stub parent active lookups with explicit `Optional.of(...)` / `Optional.empty()` and stub all unrelated uniqueness/address calls.
 - **Green Phase Guidance**:
   - [ ] Green: Resolve active parents before save; reject equal parent IDs and target self-reference; apply null replacement semantics.
@@ -129,9 +129,9 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Reject direct and indirect ancestry cycles during PUT.
 - **Target Signature**: `UserServiceImpl#update(Long, UserUpdateRequest): UserResponse`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `update_childAsParent_rejectsDirectCycle`.
-  - [ ] Red Test: `update_descendantAsParent_rejectsIndirectCycle`.
-  - [ ] Red Test: `update_unrelatedActiveParent_allowsAssignment`.
+  - [x] Red Test: `update_childAsParent_rejectsDirectCycle`.
+  - [x] Red Test: `update_descendantAsParent_rejectsIndirectCycle`.
+  - [x] Red Test: `update_unrelatedActiveParent_allowsAssignment`.
 - **Mock Behavior Guidance**: Build finite in-memory entity parent graphs and return them from active parent lookup; never rely on a database or lazy-loading proxy.
 - **Green Phase Guidance**:
   - [ ] Green: Traverse parent chains with a visited-ID set and reject any path that reaches the target; terminate safely on repeated nodes.
@@ -140,10 +140,10 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Map entities to DTOs without exposing entities or soft-deleted relation IDs.
 - **Target Signature**: response mapping used by all `UserServiceImpl` read/write methods
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `response_activeParents_includesNumericParentIds`.
-  - [ ] Red Test: `response_deletedParent_omitsCorrespondingParentId`.
-  - [ ] Red Test: `response_children_containsOnlyActiveDirectChildIds`.
-  - [ ] Red Test: `response_nullOptionalsRemainNullForJsonOmission`.
+  - [x] Red Test: `response_activeParents_includesNumericParentIds`.
+  - [x] Red Test: `response_deletedParent_omitsCorrespondingParentId`.
+  - [x] Red Test: `response_children_containsOnlyActiveDirectChildIds`.
+  - [x] Red Test: `response_nullOptionalsRemainNullForJsonOmission`.
 - **Mock Behavior Guidance**: Stub `findActiveChildren` with explicit active child entities and configure parent deletion flags.
 - **Green Phase Guidance**:
   - [ ] Green: Implement DTO mapping with active relation filtering and non-null `childrenIds`.
@@ -152,8 +152,8 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Return only an active user by ID.
 - **Target Signature**: `UserServiceImpl#getById(Long): UserResponse`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `getById_activeUser_returnsMappedResponse`.
-  - [ ] Red Test: `getById_missingOrDeletedUser_throwsUserNotFound`.
+  - [x] Red Test: `getById_activeUser_returnsMappedResponse`.
+  - [x] Red Test: `getById_missingOrDeletedUser_throwsUserNotFound`.
 - **Mock Behavior Guidance**: Stub active lookup and children query; never leave repository return values unconfigured.
 - **Green Phase Guidance**:
   - [ ] Green: Use active-only repository lookup and map the entity; translate empty result to user-not-found.
@@ -162,8 +162,8 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Perform lowercase exact active-user lookup.
 - **Target Signature**: `UserServiceImpl#getByEmail(String): UserResponse`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `getByEmail_mixedCaseInput_usesLowercaseExactLookup`.
-  - [ ] Red Test: `getByEmail_missingOrDeletedUser_throwsUserNotFound`.
+  - [x] Red Test: `getByEmail_mixedCaseInput_usesLowercaseExactLookup`.
+  - [x] Red Test: `getByEmail_missingOrDeletedUser_throwsUserNotFound`.
 - **Mock Behavior Guidance**: Stub email lookup with explicit normalized argument expectations and active children.
 - **Green Phase Guidance**:
   - [ ] Green: Lowercase input, call exact active lookup, and map or throw user-not-found.
@@ -172,12 +172,12 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Replace all mutable fields, reset omitted optionals, and enforce ID-excluding active uniqueness.
 - **Target Signature**: `UserServiceImpl#update(Long, UserUpdateRequest): UserResponse`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `update_completeRequest_replacesRequiredFieldsAndNormalizesIdentity`.
-  - [ ] Red Test: `update_omittedOptionals_resetsPhoneAddressAndParentsToNull`.
-  - [ ] Red Test: `update_sameNormalizedIdentityOnCurrentUser_isAllowed`.
-  - [ ] Red Test: `update_emailUsedByAnotherActiveUser_throwsDuplicateEmail`.
-  - [ ] Red Test: `update_phoneUsedByAnotherActiveUser_throwsDuplicatePhone`.
-  - [ ] Red Test: `update_missingOrDeletedTarget_throwsUserNotFound`.
+  - [x] Red Test: `update_completeRequest_replacesRequiredFieldsAndNormalizesIdentity`.
+  - [x] Red Test: `update_omittedOptionals_resetsPhoneAddressAndParentsToNull`.
+  - [x] Red Test: `update_sameNormalizedIdentityOnCurrentUser_isAllowed`.
+  - [x] Red Test: `update_emailUsedByAnotherActiveUser_throwsDuplicateEmail`.
+  - [x] Red Test: `update_phoneUsedByAnotherActiveUser_throwsDuplicatePhone`.
+  - [x] Red Test: `update_missingOrDeletedTarget_throwsUserNotFound`.
 - **Mock Behavior Guidance**: Stub ID-excluding existence methods; configure current target, save result, and child list.
 - **Green Phase Guidance**:
   - [ ] Green: Load active target, overwrite complete state, reset null optionals, run ID-excluding checks, save, and map.
@@ -186,9 +186,9 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Mark only the active target deleted and preserve family references.
 - **Target Signature**: `UserServiceImpl#softDelete(Long): void`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `softDelete_activeUser_setsDeletedAndSavesSameEntity`.
-  - [ ] Red Test: `softDelete_doesNotDeleteEntityOrRewriteRelatives`.
-  - [ ] Red Test: `softDelete_missingOrAlreadyDeleted_throwsUserNotFound`.
+  - [x] Red Test: `softDelete_activeUser_setsDeletedAndSavesSameEntity`.
+  - [x] Red Test: `softDelete_doesNotDeleteEntityOrRewriteRelatives`.
+  - [x] Red Test: `softDelete_missingOrAlreadyDeleted_throwsUserNotFound`.
 - **Mock Behavior Guidance**: Stub active lookup; verify `save` and verify no repository `delete*` or unrelated-user save calls.
 - **Green Phase Guidance**:
   - [ ] Green: Set `isDeleted=true` and save only the target; never physically delete or clear links.
@@ -197,12 +197,12 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Assemble active anchor, active parents, and active children with no recursion and no ordering guarantee.
 - **Target Signature**: `UserServiceImpl#getDirectFamily(Long): List<UserResponse>`
 - **Red Phase (Unit Tests)**:
-  - [ ] Red Test: `getDirectFamily_activeAnchor_returnsAnchorActiveParentsAndActiveChildren`.
-  - [ ] Red Test: `getDirectFamily_activeAnchorWithoutRelatives_returnsAnchorOnly`.
-  - [ ] Red Test: `getDirectFamily_deletedAnchor_returnsOnlyActiveDirectRelatives`.
-  - [ ] Red Test: `getDirectFamily_deletedAnchorWithoutActiveRelatives_returnsEmptyList`.
-  - [ ] Red Test: `getDirectFamily_neverExistingAnchor_throwsUserNotFound`.
-  - [ ] Red Test: `getDirectFamily_excludesDeletedRelativesAndRecursiveAncestors`.
+  - [x] Red Test: `getDirectFamily_activeAnchor_returnsAnchorActiveParentsAndActiveChildren`.
+  - [x] Red Test: `getDirectFamily_activeAnchorWithoutRelatives_returnsAnchorOnly`.
+  - [x] Red Test: `getDirectFamily_deletedAnchor_returnsOnlyActiveDirectRelatives`.
+  - [x] Red Test: `getDirectFamily_deletedAnchorWithoutActiveRelatives_returnsEmptyList`.
+  - [x] Red Test: `getDirectFamily_neverExistingAnchor_throwsUserNotFound`.
+  - [x] Red Test: `getDirectFamily_excludesDeletedRelativesAndRecursiveAncestors`.
 - **Mock Behavior Guidance**: Use inherited `findById` for the anchor (including deleted), explicit parent deletion flags, and a configured active-child list.
 - **Green Phase Guidance**:
   - [ ] Green: Resolve any existing anchor row, select only active direct members, de-duplicate by ID, and map to a top-level list.
@@ -211,12 +211,12 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Implement all six HTTP mappings with exact success status, body, and Location behavior.
 - **Target Signatures**: all `UserController` endpoint methods from Section 0.7
 - **Red Phase (Spring MVC Slice Tests)**:
-  - [ ] Red Test: `postUsers_validBody_returns201LocationAndPersistedDto`.
-  - [ ] Red Test: `getUserById_returns200Dto`.
-  - [ ] Red Test: `putUser_validReplacement_returns200Dto`.
-  - [ ] Red Test: `deleteUser_returns204AndEmptyBody`.
-  - [ ] Red Test: `getUserByEmail_passesQueryAndReturns200Dto`.
-  - [ ] Red Test: `getDirectFamily_returnsTopLevelJsonArray`.
+  - [x] Red Test: `postUsers_validBody_returns201LocationAndPersistedDto`.
+  - [x] Red Test: `getUserById_returns200Dto`.
+  - [x] Red Test: `putUser_validReplacement_returns200Dto`.
+  - [x] Red Test: `deleteUser_returns204AndEmptyBody`.
+  - [x] Red Test: `getUserByEmail_passesQueryAndReturns200Dto`.
+  - [x] Red Test: `getDirectFamily_returnsTopLevelJsonArray`.
 - **Anti-Deadlock Mock Guidance**: For every happy path, preconfigure the mocked `UserService` with a complete non-null `UserResponse`, list, or no-op. Red failure must originate from the controller's `UnsupportedOperationException`, never a null mock.
 - **Green Phase Guidance**:
   - [ ] Green: Delegate controller methods to `UserService`, construct Location from persisted ID, and return exact HTTP responses.
@@ -225,10 +225,10 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Enforce DTO validation at the HTTP boundary and response serialization rules.
 - **Target Signatures**: `UserController#create`, `UserController#update`, DTO validation annotations
 - **Red Phase (Spring MVC Slice Tests)**:
-  - [ ] Red Test: `postOrPut_blankNamesInvalidEmailOrFutureBirthDate_returns400ProblemDetails`.
-  - [ ] Red Test: `postOrPut_oversizedAddressFields_returns400WithInvalidParams`.
-  - [ ] Red Test: `postOrPut_invalidPhoneAfterNormalization_returns400ProblemDetails`.
-  - [ ] Red Test: `response_nullOptionals_areOmittedAndChildrenIdsIsArray`.
+  - [x] Red Test: `postOrPut_blankNamesInvalidEmailOrFutureBirthDate_returns400ProblemDetails`.
+  - [x] Red Test: `postOrPut_oversizedAddressFields_returns400WithInvalidParams`.
+  - [x] Red Test: `postOrPut_invalidPhoneAfterNormalization_returns400ProblemDetails`.
+  - [x] Red Test: `response_nullOptionals_areOmittedAndChildrenIdsIsArray`.
 - **Anti-Deadlock Mock Guidance**: For Bean Validation cases verify service is never called; for service-level normalized-phone failure preconfigure service to throw the intended validation exception.
 - **Green Phase Guidance**:
   - [ ] Green: Apply Jakarta constraints, nested validation, null omission configuration, and stable validation Problem Details.
@@ -237,11 +237,11 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Map service exceptions to exact RFC 7807 contracts.
 - **Target Signature**: `ApiExceptionHandler` domain-exception handlers
 - **Red Phase (Spring MVC Slice Tests)**:
-  - [ ] Red Test: `userNotFound_returns404UserNotFoundProblem`.
-  - [ ] Red Test: `parentNotFound_returns404ParentUserNotFoundProblem`.
-  - [ ] Red Test: `duplicateEmail_returns409EmailConflictProblem`.
-  - [ ] Red Test: `duplicatePhone_returns409PhoneConflictProblem`.
-  - [ ] Red Test: `invalidParentRelationship_returns400InvalidParentProblem`.
+  - [x] Red Test: `userNotFound_returns404UserNotFoundProblem`.
+  - [x] Red Test: `parentNotFound_returns404ParentUserNotFoundProblem`.
+  - [x] Red Test: `duplicateEmail_returns409EmailConflictProblem`.
+  - [x] Red Test: `duplicatePhone_returns409PhoneConflictProblem`.
+  - [x] Red Test: `invalidParentRelationship_returns400InvalidParentProblem`.
 - **Anti-Deadlock Mock Guidance**: Configure the mocked service method for each endpoint to throw the exact domain exception. No mock may return null.
 - **Green Phase Guidance**:
   - [ ] Green: Produce `application/problem+json` with exact `type`, `title`, `status`, `detail`, and request `instance`.
@@ -250,8 +250,8 @@ Execute tasks in order. Every mocked collaborator must be configured with valid 
 - **Step Goal**: Map field validation and unreadable JSON to stable Problem Details.
 - **Target Signature**: `ApiExceptionHandler` validation and malformed-payload handlers
 - **Red Phase (Spring MVC Slice Tests)**:
-  - [ ] Red Test: `beanValidationFailure_returns400WithInvalidParamsNameAndReason`.
-  - [ ] Red Test: `malformedJsonOrInvalidDate_returns400MalformedJsonProblem`.
+  - [x] Red Test: `beanValidationFailure_returns400WithInvalidParamsNameAndReason`.
+  - [x] Red Test: `malformedJsonOrInvalidDate_returns400MalformedJsonProblem`.
 - **Anti-Deadlock Mock Guidance**: Validation/malformed requests must fail before service invocation; verify zero service interactions.
 - **Green Phase Guidance**:
   - [ ] Green: Collect field errors into `invalidParams`; map unreadable payloads to `urn:user-service:error:malformed-json`.
