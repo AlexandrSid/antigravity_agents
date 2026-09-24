@@ -1,0 +1,10 @@
+.git
+.gradle
+.idea
+.ai
+.cursor
+build
+data
+docs
+src/test
+*.md

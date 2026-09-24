@@ -1,2 +1,7 @@
 .idea/
+.gradle/
+build/
+data/
+*.iml
+.DS_Store
 .ai/agents-config.local.md
