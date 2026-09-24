@@ -23,10 +23,10 @@
 |---|---|---|---|
 | **Planner** | `.ai/rules/planner.md` | `REASONING_HEAVY` | Интервью с пользователем, выявление стека, работа с неопределенностями PRD. |
 | **Architect** | `.ai/rules/architect.md` | `REASONING_HEAVY` | Проектирование контрактов, схем данных и архитектуры `SPEC.md`. |
-| **QA Planner** | `.ai/rules/qa-planner.md` | `REASONING_HEAVY` | Полнота декомпозиции сценариев, граничных условий и формирование `QA_PLAN.md`. |
+| **TDD Planner** | `.ai/rules/tdd-planner.md` | `REASONING_HEAVY` | Декомпозиция спецификации на атомарные TDD-микрозадачи и Unit-тесты (`TDD_PLAN.md`). |
 | **Environment Bootstrap** | `.ai/rules/environment-bootstrap.md` | `FAST_EXECUTION` | Нативная генерация конфигов сборки (Gradle, Cargo, Docker, YAML, Migrations). |
 | **Skeleton Writer** | `.ai/rules/skeleton-writer.md` | `FAST_EXECUTION` | Быстрая генерация DTO, интерфейсов и пустых заглушек (Секция 0). |
-| **Test Writer** | `.ai/rules/test-writer.md` | `STRICT_CODEGEN` | Написание точных падающих автотестов строго по `QA_PLAN.md` (Red Phase). |
+| **Test Writer** | `.ai/rules/test-writer.md` | `STRICT_CODEGEN` | Написание точных падающих Unit-тестов строго по `TDD_PLAN.md` (Red Phase). |
 | **Code Writer** | `.ai/rules/code-writer.md` | `STRICT_CODEGEN` | Точная реализация бизнес-логики до достижения 100% «зеленых» тестов (Green Phase). |
 
 ---
@@ -75,4 +75,4 @@ preferred_model = "current-best-fast"
 
 ## 4. OPERATIONAL INSTRUCTIONS FOR IDE AGENTS
 Каждый агент перед началом выполнения фазы обязан вывести в первом сообщении строку с рекомендуемым профилем и моделью, например:
-> `**[qa-planner]**: Active Profile: REASONING_HEAVY (Recommended Model: Claude 3.7 Sonnet / o3-mini)`
+> `**[tdd-planner]**: Active Profile: REASONING_HEAVY (Recommended Model: Claude 3.7 Sonnet / o3-mini)`
