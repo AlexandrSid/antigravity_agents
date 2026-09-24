@@ -25,51 +25,51 @@
 All artifacts use base package `com.userservice`. Method bodies in concrete service/controller/error-handler skeletons must throw `UnsupportedOperationException("Not implemented")`. Entities contain persistence mapping only—no business behavior.
 
 ### 0.1 Application Entry Point
-- [ ] Skeleton: Create `com.userservice.UserServiceApplication` with `@SpringBootApplication` and a standard `main(String[] args)` entry point.
+- [x] Skeleton: Create `com.userservice.UserServiceApplication` with `@SpringBootApplication` and a standard `main(String[] args)` entry point.
 
 ### 0.2 DTO Contracts
-- [ ] Skeleton: Create `AddressDto(Long id, String country, String city, String street, String building, String apartment, String postalCode)`; `id` is response-only, required address fields carry Jakarta validation, and null optional fields are omitted from JSON.
-- [ ] Skeleton: Create `UserCreateRequest(String firstName, String lastName, LocalDate birthDate, String email, String phoneNumber, AddressDto address, Long fatherId, Long motherId)` with SPEC validation and `@Valid` nested address.
-- [ ] Skeleton: Create `UserUpdateRequest` with the same replacement fields and validation surface as `UserCreateRequest`.
-- [ ] Skeleton: Create `UserResponse(Long id, String firstName, String lastName, LocalDate birthDate, String email, String phoneNumber, AddressDto address, Long fatherId, Long motherId, List<Long> childrenIds)`; omit null optionals and always emit `childrenIds`.
+- [x] Skeleton: Create `AddressDto(Long id, String country, String city, String street, String building, String apartment, String postalCode)`; `id` is response-only, required address fields carry Jakarta validation, and null optional fields are omitted from JSON.
+- [x] Skeleton: Create `UserCreateRequest(String firstName, String lastName, LocalDate birthDate, String email, String phoneNumber, AddressDto address, Long fatherId, Long motherId)` with SPEC validation and `@Valid` nested address.
+- [x] Skeleton: Create `UserUpdateRequest` with the same replacement fields and validation surface as `UserCreateRequest`.
+- [x] Skeleton: Create `UserResponse(Long id, String firstName, String lastName, LocalDate birthDate, String email, String phoneNumber, AddressDto address, Long fatherId, Long motherId, List<Long> childrenIds)`; omit null optionals and always emit `childrenIds`.
 
 ### 0.3 Persistence Types
-- [ ] Skeleton: Create JPA `Address` mapped to `addresses` with `id`, `country`, `city`, `street`, `building`, nullable `apartment`, and nullable `postalCode`.
-- [ ] Skeleton: Create JPA `User` mapped to `users` with `id`, demographics, normalized email/phone, nullable many-to-one `Address`, nullable self-referencing `father`/`mother`, and `isDeleted`.
+- [x] Skeleton: Create JPA `Address` mapped to `addresses` with `id`, `country`, `city`, `street`, `building`, nullable `apartment`, and nullable `postalCode`.
+- [x] Skeleton: Create JPA `User` mapped to `users` with `id`, demographics, normalized email/phone, nullable many-to-one `Address`, nullable self-referencing `father`/`mother`, and `isDeleted`.
 
 ### 0.4 Repository Contracts
-- [ ] Skeleton: Create `AddressRepository extends JpaRepository<Address, Long>` with `Optional<Address> findMatchingNormalized(String country, String city, String street, String building, String apartment, String postalCode)`.
-- [ ] Skeleton: Create `UserRepository extends JpaRepository<User, Long>` with `Optional<User> findByIdAndIsDeletedFalse(Long id)`, `Optional<User> findByEmailAndIsDeletedFalse(String email)`, and inherited `findById(Long id)` for family-anchor resolution.
-- [ ] Skeleton: Add active uniqueness signatures: `existsByEmailAndIsDeletedFalse`, `existsByPhoneNumberAndIsDeletedFalse`, plus ID-excluding variants for PUT.
-- [ ] Skeleton: Add `List<User> findActiveChildren(Long parentId)` for `(father_id = :id OR mother_id = :id) AND is_deleted = false`.
+- [x] Skeleton: Create `AddressRepository extends JpaRepository<Address, Long>` with `Optional<Address> findMatchingNormalized(String country, String city, String street, String building, String apartment, String postalCode)`.
+- [x] Skeleton: Create `UserRepository extends JpaRepository<User, Long>` with `Optional<User> findByIdAndIsDeletedFalse(Long id)`, `Optional<User> findByEmailAndIsDeletedFalse(String email)`, and inherited `findById(Long id)` for family-anchor resolution.
+- [x] Skeleton: Add active uniqueness signatures: `existsByEmailAndIsDeletedFalse`, `existsByPhoneNumberAndIsDeletedFalse`, plus ID-excluding variants for PUT.
+- [x] Skeleton: Add `List<User> findActiveChildren(Long parentId)` for `(father_id = :id OR mother_id = :id) AND is_deleted = false`.
 
 ### 0.5 Service Type Surface
-- [ ] Skeleton: Create `UserService` interface with:
+- [x] Skeleton: Create `UserService` interface with:
   - `UserResponse create(UserCreateRequest request)`
   - `UserResponse getById(Long id)`
   - `UserResponse update(Long id, UserUpdateRequest request)`
   - `void softDelete(Long id)`
   - `UserResponse getByEmail(String email)`
   - `List<UserResponse> getDirectFamily(Long id)`
-- [ ] Skeleton: Create `UserServiceImpl` implementing every `UserService` method; inject `UserRepository` and `AddressRepository`; every method throws `UnsupportedOperationException("Not implemented")`.
+- [x] Skeleton: Create `UserServiceImpl` implementing every `UserService` method; inject `UserRepository` and `AddressRepository`; every method throws `UnsupportedOperationException("Not implemented")`.
 
 ### 0.6 Error Contracts
-- [ ] Skeleton: Create domain API exception types for user absence, parent absence, duplicate email, duplicate phone, invalid phone input, and invalid parent relationship; no mapping logic yet.
-- [ ] Skeleton: Create RFC 7807 validation item DTO `InvalidParam(String name, String reason)`.
-- [ ] Skeleton: Create `ApiExceptionHandler` (`@RestControllerAdvice`) signatures for domain exceptions, method-argument validation, and malformed JSON; every handler throws `UnsupportedOperationException("Not implemented")`.
+- [x] Skeleton: Create domain API exception types for user absence, parent absence, duplicate email, duplicate phone, invalid phone input, and invalid parent relationship; no mapping logic yet.
+- [x] Skeleton: Create RFC 7807 validation item DTO `InvalidParam(String name, String reason)`.
+- [x] Skeleton: Create `ApiExceptionHandler` (`@RestControllerAdvice`) signatures for domain exceptions, method-argument validation, and malformed JSON; every handler throws `UnsupportedOperationException("Not implemented")`.
 
 ### 0.7 HTTP Endpoint Stubs
-- [ ] Skeleton: Create `UserController` at `/api/v1/users`, inject `UserService`, and expose:
+- [x] Skeleton: Create `UserController` at `/api/v1/users`, inject `UserService`, and expose:
   - `POST /api/v1/users`
   - `GET /api/v1/users/{id}`
   - `PUT /api/v1/users/{id}`
   - `DELETE /api/v1/users/{id}`
   - `GET /api/v1/users/by-email?email=...`
   - `GET /api/v1/users/{id}/family`
-- [ ] Skeleton: Apply exact request validation, parameter bindings, DTO-only return types, and success response signatures; every handler throws `UnsupportedOperationException("Not implemented")`.
+- [x] Skeleton: Apply exact request validation, parameter bindings, DTO-only return types, and success response signatures; every handler throws `UnsupportedOperationException("Not implemented")`.
 
 ### 0.8 Skeleton Gate
-- [ ] Skeleton: Run the exact `Compile / Build Check` command from `docs/PROJECT_ENV.md`; confirm zero syntax, type, package, or import errors without writing tests or business logic.
+- [x] Skeleton: Run the exact `Compile / Build Check` command from `docs/PROJECT_ENV.md`; confirm zero syntax, type, package, or import errors without writing tests or business logic.
 
 ---
 
