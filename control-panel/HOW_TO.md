@@ -68,17 +68,31 @@ python control-panel/run.py greenfield my-feature --dry-run
 python .ai/scripts/orchestrator.py [ПАРАМЕТРЫ]
 ```
 
-#### Таблица всех флагов
+#### Справочник всех флагов
 
-| Флаг | Тип / Значения | Обязательный | Значение по умолчанию | Описание |
-|---|---|:---:|---|---|
-| `--feature` | `STRING` | **Да** | — | Название фичи / компонента. Подставляется вместо плейсхолдера `{feature}` в путях артефактов и именах веток (например, `docs/features/{feature}/SPEC.md`). |
-| `--pipeline` | `PATH` | Нет | `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md` | Путь к Markdown-файлу пайплайна (таблице SSOT). Может быть как относительным от корня репозитория, так и абсолютным. |
-| `--mode` | `auto` \| `interactive` | Нет | `auto` | Режим выполнения шагов: <br>• `auto`: сквозное безостановочное выполнение шагов пайплайна;<br>• `interactive`: запрос подтверждения оператора (`[Y/n/q]`) перед каждым шагом. |
-| `--git-auto` | *Флаг-переключатель* | Нет | `False` | Автоматически создает и переключается на изолированную ветку `agent-feature-{feature}`, если текущая ветка защищена (`main`, `master`, `prod`, `release/*`). |
-| `--from-step` | `INTEGER` (например, `5`) | Нет | `None` (с 1 шага) | Возобновить выполнение с шага номер N (1-индексация). Удобно после ручной правки упавшего шага. |
-| `--dry-run` | *Флаг-переключатель* | Нет | `False` | Режим валидации (сухой прогон). Парсит пайплайн, проверяет зависимости артефактов, определяет среду и выводит план выполнения **без вызовов LLM, без записи файлов и без Git-операций**. |
-| `-h`, `--help` | *Флаг-переключатель* | Нет | — | Выводит справочную информацию по аргументам и завершает работу. |
+- **`--feature <STRING>`** *(Обязательный)*  
+  Название разрабатываемой фичи или компонента (например, `auth`, `billing`, `user-service`).  
+  Подставляется вместо плейсхолдера `{feature}` в путях артефактов и именах Git-веток (`docs/features/{feature}/SPEC.md`).
+
+- **`--pipeline <PATH>`** *(Опционально, по умолчанию: `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`)*  
+  Путь к Markdown-файлу пайплайна (таблице SSOT). Принимает относительный от корня или абсолютный путь.
+
+- **`--mode <auto | interactive>`** *(Опционально, по умолчанию: `auto`)*  
+  Режим выполнения шагов:
+  - `auto` — непрерывное сквозное выполнение шагов пайплайна;
+  - `interactive` — запрос подтверждения оператора (`[Y/n/q]`) перед каждым шагом.
+
+- **`--git-auto`** *(Флаг-переключатель, по умолчанию: выключен)*  
+  Автоматически создает и переключается на изолированную ветку `agent-feature-{feature}`, если текущая ветка защищена (`main`, `master`, `prod`, `release/*`). Исключает случайные коммиты агентов в релизные ветки.
+
+- **`--from-step <N>`** *(Целое число, по умолчанию: 1)*  
+  Возобновление выполнения с шага под номером N (1-индексация). Незаменимо, если шаг упал на Quality Gate, оператор исправил код вручную и хочет продолжить без перезапуска с нуля.
+
+- **`--dry-run`** *(Флаг-переключатель, по умолчанию: выключен)*  
+  Режим валидации (сухой прогон). Парсит пайплайн, проверяет зависимости артефактов и определяет среду **без вызовов LLM, без записи файлов и без Git-операций**.
+
+- **`-h`, `--help`**  
+  Выводит справочную информацию по аргументам и завершает работу.
 
 ---
 
@@ -200,15 +214,29 @@ python .ai/scripts/orchestrator.py [OPTIONS]
 
 #### Complete Flags Reference
 
-| Flag | Type / Values | Required | Default | Description |
-|---|---|:---:|---|---|
-| `--feature` | `STRING` | **Yes** | — | Name of the feature or component. Substitutes the `{feature}` placeholder in pipeline artifact paths (e.g. `docs/features/{feature}/SPEC.md`). |
-| `--pipeline` | `PATH` | No | `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md` | Path to the pipeline Markdown specification file (SSOT table). Accepts relative or absolute filesystem paths. |
-| `--mode` | `auto` \| `interactive` | No | `auto` | Execution mode: <br>• `auto`: runs pipeline steps end-to-end without stopping;<br>• `interactive`: prompts operator for confirmation (`[Y/n/q]`) before executing each step. |
-| `--git-auto` | *Flag / switch* | No | `False` | Automatically creates and switches to an isolated `agent-feature-{feature}` branch if currently on a protected branch (`main`, `master`, `prod`, `release/*`). |
-| `--from-step` | `INTEGER` (e.g. `5`) | No | `None` (starts at step 1) | Resume pipeline execution starting at step N (1-indexed). |
-| `--dry-run` | *Flag / switch* | No | `False` | Dry run validation mode. Parses the pipeline, checks input artifact readiness, resolves platform configs, and displays the plan **without LLM calls, file edits, or git modifications**. |
-| `-h`, `--help` | *Flag / switch* | No | — | Displays the command-line help message with examples and exits. |
+- **`--feature <STRING>`** *(Required)*  
+  Name of the feature or component (e.g., `auth`, `billing`, `user-service`).  
+  Substitutes the `{feature}` placeholder in pipeline artifact paths and git branch names (`docs/features/{feature}/SPEC.md`).
+
+- **`--pipeline <PATH>`** *(Optional, default: `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`)*  
+  Path to the pipeline Markdown specification file (SSOT table). Accepts relative or absolute filesystem paths.
+
+- **`--mode <auto | interactive>`** *(Optional, default: `auto`)*  
+  Execution mode:
+  - `auto` — runs pipeline steps end-to-end without stopping;
+  - `interactive` — prompts operator for confirmation (`[Y/n/q]`) before executing each step.
+
+- **`--git-auto`** *(Flag / switch, default: off)*  
+  Automatically creates and switches to an isolated `agent-feature-{feature}` branch if currently on a protected branch (`main`, `master`, `prod`, `release/*`). Prevents agents from committing directly to release branches.
+
+- **`--from-step <N>`** *(Integer, default: 1)*  
+  Resume pipeline execution starting at step N (1-indexed). Useful after fixing a Quality Gate failure or inspecting artifacts.
+
+- **`--dry-run`** *(Flag / switch, default: off)*  
+  Dry run validation mode. Parses the pipeline, checks input artifact readiness, resolves platform configs, and displays the plan **without LLM calls, file edits, or git modifications**.
+
+- **`-h`, `--help`**  
+  Displays command-line help message with examples and exits.
 
 ---
 
