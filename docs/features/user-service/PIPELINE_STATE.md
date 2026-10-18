@@ -3,10 +3,10 @@
 > **Pipeline SSOT**: `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`  
 > **Feature Branch**: `agent-feature-user-service`  
 > **Overall Status**: `IN_PROGRESS`  
-> **Current Step**: `04`  
+> **Current Step**: `05`  
 > **Active Environment**: `antigravity`  
 > **Created At**: `2026-10-18T23:58:30+02:00`  
-> **Last Updated**: `2026-10-19T00:09:45+02:00`
+> **Last Updated**: `2026-10-19T00:16:40+02:00`
 
 ---
 
@@ -22,8 +22,8 @@
 | [x] **01** | **Architect** | `COMPLETED` | `NONE` | `6ff3c84` | `antigravity` | 2026-10-19T00:03:09+02:00 |
 | [x] **02** | **TDD Planner** | `COMPLETED` | `NONE` | `4d6a967` | `antigravity` | 2026-10-19T00:04:09+02:00 |
 | [x] **03** | **Environment Bootstrap** | `COMPLETED` | `NONE` | `f3d73cd` | `antigravity` | 2026-10-19T00:09:27+02:00 |
-| [>] **04** | **Skeleton Writer** | `IN_PROGRESS` | `COMPILE_CHECK` | — | — | — |
-| [ ] **05** | **Test Writer** | `PENDING` | `UNIT_RED_PHASE` | — | — | — |
+| [x] **04** | **Skeleton Writer** | `COMPLETED` | `COMPILE_CHECK` | `abaf210` | `antigravity` | 2026-10-19T00:16:28+02:00 |
+| [>] **05** | **Test Writer** | `IN_PROGRESS` | `UNIT_RED_PHASE` | — | — | — |
 | [ ] **06** | **Code Writer** | `PENDING` | `UNIT_GREEN_PHASE` | — | — | — |
 | [ ] **07** | **Integration Test Writer** | `PENDING` | `NONE` | — | — | — |
 | [ ] **08** | **Integration Code Writer** | `PENDING` | `INTEGRATION_GREEN_PHASE` | — | — | — |
@@ -41,7 +41,7 @@
 - **Step 03 (Environment Bootstrap)**:
   - [x] Build manifest & directory tree per `SPEC.md`
 - **Step 04 (Skeleton Writer)**:
-  - [ ] Compilable surface types (DTOs, entities, interfaces, stubs)
+  - [x] Compilable surface types (DTOs, entities, interfaces, stubs)
 - **Step 05 (Test Writer)**:
   - [ ] Failing unit/slice tests in `src/test/**` (Red Phase validated)
 - **Step 06 (Code Writer)**:
@@ -63,3 +63,4 @@
 | 2026-10-19T00:03:09+02:00 | 01 | STEP_COMPLETED | antigravity | Architect deliverables finalized (SPEC.md, PROJECT_ENV.md), commit 6ff3c84 |
 | 2026-10-19T00:04:09+02:00 | 02 | STEP_COMPLETED | antigravity | TDD Planner roadmap finalized (TDD_PLAN.md), commit 4d6a967 |
 | 2026-10-19T00:09:27+02:00 | 03 | STEP_COMPLETED | antigravity | Environment Bootstrap finalized (build.gradle.kts, gradlew, migrations, Docker), commit f3d73cd |
+| 2026-10-19T00:16:28+02:00 | 04 | STEP_COMPLETED | antigravity | Skeleton Writer finalized (types, entities, repos, services, stubs), COMPILE_CHECK passed, commit abaf210 |
