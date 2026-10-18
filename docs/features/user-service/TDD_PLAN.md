@@ -120,7 +120,7 @@ Checklist of all DTOs, interfaces, entities, and endpoint stubs that `skeleton-w
 ## 2. Deferred Integration & E2E Backlog
 Checklist of deferred integration scenarios for future phases after unit TDD cycle completion.
 
-- [ ] Integration: Flyway schema migration application (`V1__init_schema.sql`) and index verification on H2
-- [ ] Integration: Flyway seed dataset verification (`V2__seed_users.sql`): exactly 1,000 active users, 20 distinct addresses, parental age invariants (`birthDate(parent) < birthDate(child)`)
-- [ ] Integration: Multi-container orchestration verification via Docker Compose (`user-service` + standalone `h2-db` TCP server)
-- [ ] E2E: Full end-to-end user scenario through the deployed HTTP interface (Create -> Retrieve -> Family lookup -> Soft delete -> Verify exclusion)
+- [x] Integration: Flyway schema migration application (`V1__init_schema.sql`) and index verification on H2
+- [x] Integration: Flyway seed dataset verification (`V2__seed_users.sql`): exactly 1,000 active users, 20 distinct addresses, parental age invariants (`birthDate(parent) < birthDate(child)`)
+- [x] Integration: Multi-container orchestration verification via Docker Compose (`user-service` + standalone `h2-db` TCP server)
+- [x] E2E: Full end-to-end user scenario through the deployed HTTP interface (Create -> Retrieve -> Family lookup -> Soft delete -> Verify exclusion)

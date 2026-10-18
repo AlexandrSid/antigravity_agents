@@ -26,7 +26,7 @@ CREATE TABLE users (
     CONSTRAINT fk_users_mother FOREIGN KEY (mother_id) REFERENCES users(id)
 );
 
-CREATE UNIQUE INDEX uq_users_active_email ON users(email) WHERE is_deleted = FALSE;
-CREATE UNIQUE INDEX uq_users_active_phone ON users(phone_number) WHERE is_deleted = FALSE AND phone_number IS NOT NULL;
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_phone ON users(phone_number);
 CREATE INDEX idx_users_is_deleted ON users(is_deleted);
 CREATE INDEX idx_users_parents ON users(father_id, mother_id);
