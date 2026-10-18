@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  h2-db:
+    image: oscarfonts/h2:latest
+    container_name: h2-db
+    ports:
+      - "9092:9092"
+      - "8082:8082"
+    environment:
+      H2_OPTIONS: -tcp -tcpAllowOthers -tcpPort 9092 -web -webAllowOthers -webPort 8082
+    volumes:
+      - h2-data:/opt/h2-data
+
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: user-service
+    depends_on:
+      - h2-db
+    ports:
+      - "8080:8080"
+    environment:
+      QUARKUS_PROFILE: docker
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:h2:tcp://h2-db:9092/mem:userdb;DB_CLOSE_DELAY=-1
+
+volumes:
+  h2-data:
