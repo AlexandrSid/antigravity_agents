@@ -12,17 +12,17 @@
 ## 0. Type Surface & Skeleton Roadmap
 Checklist of all DTOs, interfaces, entities, and endpoint stubs that `skeleton-writer` must place on disk before tests begin.
 
-- [ ] Implement: DTO `AddressDto` matching SPEC §2.1 and §3.2 with validation constraints
-- [ ] Implement: DTO `CreateUserRequest` matching SPEC §2.1 and §3.1 with Jakarta Validation constraints
-- [ ] Implement: DTO `UpdateUserRequest` matching SPEC §2.1, §3.1, and §100-103
-- [ ] Implement: DTO `UserResponse` matching SPEC §2.1 with `@JsonInclude(JsonInclude.Include.NON_NULL)`
-- [ ] Implement: DTO `ProblemDetail` (RFC 7807) and `InvalidParam` matching SPEC §4
-- [ ] Implement: JPA entity `Address` with Panache companion/repository
-- [ ] Implement: JPA entity `User` with Panache companion/repository (with soft-delete flag, self/parent relationships)
-- [ ] Implement: Repository interfaces/classes `UserRepository` and `AddressRepository`
-- [ ] Implement: Service interface & class `UserService` with method stubs throwing `NotImplementedError` or `UnsupportedOperationException`
-- [ ] Implement: Exception mapper `ConstraintViolationExceptionMapper`, `UserNotFoundExceptionMapper`, `ConflictExceptionMapper`, `CyclicRelationshipExceptionMapper`
-- [ ] Implement: Resource/Controller `UserResource` (`/api/v1/users`) endpoint stubs throwing `UnsupportedOperationException`
+- [x] Implement: DTO `AddressDto` matching SPEC §2.1 and §3.2 with validation constraints
+- [x] Implement: DTO `CreateUserRequest` matching SPEC §2.1 and §3.1 with Jakarta Validation constraints
+- [x] Implement: DTO `UpdateUserRequest` matching SPEC §2.1, §3.1, and §100-103
+- [x] Implement: DTO `UserResponse` matching SPEC §2.1 with `@JsonInclude(JsonInclude.Include.NON_NULL)`
+- [x] Implement: DTO `ProblemDetail` (RFC 7807) and `InvalidParam` matching SPEC §4
+- [x] Implement: JPA entity `Address` with Panache companion/repository
+- [x] Implement: JPA entity `User` with Panache companion/repository (with soft-delete flag, self/parent relationships)
+- [x] Implement: Repository interfaces/classes `UserRepository` and `AddressRepository`
+- [x] Implement: Service interface & class `UserService` with method stubs throwing `NotImplementedError` or `UnsupportedOperationException`
+- [x] Implement: Exception mapper `ConstraintViolationExceptionMapper`, `UserNotFoundExceptionMapper`, `ConflictExceptionMapper`, `CyclicRelationshipExceptionMapper`
+- [x] Implement: Resource/Controller `UserResource` (`/api/v1/users`) endpoint stubs throwing `UnsupportedOperationException`
 
 ---
 
