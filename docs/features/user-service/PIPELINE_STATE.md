@@ -3,10 +3,10 @@
 > **Pipeline SSOT**: `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`  
 > **Feature Branch**: `agent-feature-user-service`  
 > **Overall Status**: `IN_PROGRESS`  
-> **Current Step**: `06`  
+> **Current Step**: `07`  
 > **Active Environment**: `antigravity`  
 > **Created At**: `2026-10-18T23:58:30+02:00`  
-> **Last Updated**: `2026-10-19T00:28:10+02:00`
+> **Last Updated**: `2026-10-19T00:42:25+02:00`
 
 ---
 
@@ -24,8 +24,8 @@
 | [x] **03** | **Environment Bootstrap** | `COMPLETED` | `NONE` | `f3d73cd` | `antigravity` | 2026-10-19T00:09:27+02:00 |
 | [x] **04** | **Skeleton Writer** | `COMPLETED` | `COMPILE_CHECK` | `abaf210` | `antigravity` | 2026-10-19T00:16:28+02:00 |
 | [x] **05** | **Test Writer** | `COMPLETED` | `UNIT_RED_PHASE` | `b3a3c5b` | `antigravity` | 2026-10-19T00:27:53+02:00 |
-| [>] **06** | **Code Writer** | `IN_PROGRESS` | `UNIT_GREEN_PHASE` | — | — | — |
-| [ ] **07** | **Integration Test Writer** | `PENDING` | `NONE` | — | — | — |
+| [x] **06** | **Code Writer** | `COMPLETED` | `UNIT_GREEN_PHASE` | `ed09bcf` | `antigravity` | 2026-10-19T00:42:06+02:00 |
+| [>] **07** | **Integration Test Writer** | `IN_PROGRESS` | `NONE` | — | — | — |
 | [ ] **08** | **Integration Code Writer** | `PENDING` | `INTEGRATION_GREEN_PHASE` | — | — | — |
 | [ ] **09** | **Documenter** | `PENDING` | `NONE` | — | — | — |
 
@@ -45,7 +45,7 @@
 - **Step 05 (Test Writer)**:
   - [x] Failing unit/slice tests in `src/test/**` (Red Phase validated)
 - **Step 06 (Code Writer)**:
-  - [ ] Production code in `src/main/**` (Green Phase validated)
+  - [x] Production code in `src/main/**` (Green Phase validated)
 - **Step 07 (Integration Test Writer)**:
   - [ ] Integration tests in `src/integrationTest/**` & `docs/features/user-service/INTEGRATION_REPORT.md`
 - **Step 08 (Integration Code Writer)**:
@@ -65,3 +65,4 @@
 | 2026-10-19T00:09:27+02:00 | 03 | STEP_COMPLETED | antigravity | Environment Bootstrap finalized (build.gradle.kts, gradlew, migrations, Docker), commit f3d73cd |
 | 2026-10-19T00:16:28+02:00 | 04 | STEP_COMPLETED | antigravity | Skeleton Writer finalized (types, entities, repos, services, stubs), COMPILE_CHECK passed, commit abaf210 |
 | 2026-10-19T00:27:53+02:00 | 05 | STEP_COMPLETED | antigravity | Test Writer finalized (Unit tests, pre-configured mocks), UNIT_RED_PHASE passed, commit b3a3c5b |
+| 2026-10-19T00:42:06+02:00 | 06 | STEP_COMPLETED | antigravity | Code Writer finalized (domain logic, repos, services, resources), UNIT_GREEN_PHASE passed, commit ed09bcf |
