@@ -32,7 +32,7 @@
    Запусти Greenfield-пайплайн для фичи user-service
    ```
 2. **Как работает оркестратор**:
-   - Активирует скилл `greenfield-orchestrator` и контракт `.antigravity/orchestrator.md`.
+   - Активирует скилл `sdlc-orchestrator` и контракт `.antigravity/orchestrator.md`.
    - Проверяет `docs/features/user-service/PIPELINE_STATE.md`.
    - Если это первый запуск — инициализирует матрицу шагов из `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`.
    - Последовательно вызывает субагентов для каждого шага (Шаг 01 Architect ➔ Шаг 02 TDD Planner ➔ ...).
