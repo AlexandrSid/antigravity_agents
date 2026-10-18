@@ -51,6 +51,18 @@ from git_engine       import (
 from trace_logger     import StepTimer, record, print_trace_summary, session_totals
 
 
+# Fix Windows console encoding for UTF-8 output
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 # ---------------------------------------------------------------------------
 # ANSI colours (degrade gracefully on terminals without support)
 # ---------------------------------------------------------------------------
@@ -79,10 +91,10 @@ def _cyan(t: str)   -> str: return _c(t, "36")
 # ---------------------------------------------------------------------------
 
 BANNER = r"""
-╔══════════════════════════════════════════════════════════╗
-║        Anti-Gravity Agents — CLI Orchestrator           ║
-║        Subscription-First · Zero External Dependencies  ║
-╚══════════════════════════════════════════════════════════╝
++==========================================================+
+|        Anti-Gravity Agents -- CLI Orchestrator           |
+|        Subscription-First * Zero External Dependencies   |
++==========================================================+
 """
 
 
@@ -433,6 +445,9 @@ def run_pipeline(args: argparse.Namespace) -> int:
         )
 
         if not success:
+            if args.dry_run:
+                print(_red(f"\n  ✖ Dry run stopped at Step {step.step_id}: step requirements not met."))
+                return 1
             action = _human_in_the_loop(step)
 
             if action == "retry_ide":
@@ -472,7 +487,7 @@ def run_pipeline(args: argparse.Namespace) -> int:
     # --- Final summary ---
     trace_file = repo_root / "docs" / "features" / args.feature / "EXECUTION_TRACE.json"
     totals = session_totals(trace_file)
-    print(_bold("\n" + "═" * 60))
+    print(_bold("\n" + "=" * 60))
     print(_bold(_green("  ✔ Pipeline completed successfully!")))
     print(f"  Steps completed : {totals['steps']}")
     print(f"  Total tokens    : {totals['total_tokens']:,}")
@@ -480,7 +495,7 @@ def run_pipeline(args: argparse.Namespace) -> int:
     cost_str = f"${cost:.4f}" if cost > 0 else "$0.00 (native/local)"
     print(f"  Total cost      : {cost_str}")
     print(f"  Total time      : {totals['total_duration_sec']}s")
-    print(_bold("═" * 60 + "\n"))
+    print(_bold("=" * 60 + "\n"))
     return 0
 
 
@@ -518,8 +533,8 @@ def _build_parser() -> argparse.ArgumentParser:
         """),
     )
     parser.add_argument(
-        "--pipeline", default=".ai/GREENFIELD_SDLC_PIPELINE.md",
-        help="Path to the pipeline Markdown file (default: .ai/GREENFIELD_SDLC_PIPELINE.md).",
+        "--pipeline", default=".ai/pipelines/GREENFIELD_SDLC_PIPELINE.md",
+        help="Path to the pipeline Markdown file (default: .ai/pipelines/GREENFIELD_SDLC_PIPELINE.md).",
     )
     parser.add_argument(
         "--feature", required=True,
@@ -553,9 +568,15 @@ def main() -> None:
     args = parser.parse_args()
 
     # Resolve pipeline path relative to repo root if not absolute
-    if not Path(args.pipeline).is_absolute():
-        args.pipeline = str(REPO_ROOT / args.pipeline)
+    p = Path(args.pipeline)
+    if not p.is_absolute():
+        p = REPO_ROOT / p
 
+    # Fallback: if old path or non-existent path passed, check .ai/pipelines/
+    if not p.exists() and (REPO_ROOT / ".ai" / "pipelines" / p.name).exists():
+        p = REPO_ROOT / ".ai" / "pipelines" / p.name
+
+    args.pipeline = str(p)
     sys.exit(run_pipeline(args))
 
 
