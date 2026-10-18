@@ -5,9 +5,12 @@ import com.example.userservice.domain.entity.Address
 import com.example.userservice.domain.repository.AddressRepository
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class AddressServiceTest {
 
@@ -16,15 +19,14 @@ class AddressServiceTest {
 
     @BeforeEach
     fun setUp() {
-        addressRepository = mockk(relaxed = true)
+        addressRepository = mockk(relaxed = false)
         addressService = AddressService(addressRepository)
     }
 
     @Test
     fun testResolveAddress_returnsNullWhenDtoIsNull() {
-        assertThrows<UnsupportedOperationException> {
-            addressService.resolveAddress(null)
-        }
+        val result = addressService.resolveAddress(null)
+        assertNull(result)
     }
 
     @Test
@@ -46,11 +48,12 @@ class AddressServiceTest {
             apartment = "2A",
             postalCode = "10178"
         )
-        every { addressRepository.findMatching(any(), any(), any(), any(), any(), any()) } returns existing
+        every { addressRepository.findMatching("Germany", "Berlin", "Alexanderplatz 1", "10", "2A", "10178") } returns existing
 
-        assertThrows<UnsupportedOperationException> {
-            addressService.resolveAddress(dto)
-        }
+        val result = addressService.resolveAddress(dto)
+        assertNotNull(result)
+        assertEquals(1L, result?.id)
+        verify(exactly = 0) { addressRepository.persist(any<Address>()) }
     }
 
     @Test
@@ -63,11 +66,12 @@ class AddressServiceTest {
             apartment = "1",
             postalCode = "80331"
         )
-        every { addressRepository.findMatching(any(), any(), any(), any(), any(), any()) } returns null
+        every { addressRepository.findMatching("Germany", "Munich", "Marienplatz", "5", "1", "80331") } returns null
         every { addressRepository.persist(any<Address>()) } answers { }
 
-        assertThrows<UnsupportedOperationException> {
-            addressService.resolveAddress(dto)
-        }
+        val result = addressService.resolveAddress(dto)
+        assertNotNull(result)
+        assertEquals("Munich", result?.city)
+        verify(exactly = 1) { addressRepository.persist(any<Address>()) }
     }
 }

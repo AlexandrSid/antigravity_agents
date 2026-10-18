@@ -16,6 +16,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import java.net.URI
 
 @Path("/api/v1/users")
 @Produces(MediaType.APPLICATION_JSON)
@@ -26,36 +27,39 @@ class UserResource(
 
     @POST
     fun createUser(@Valid request: CreateUserRequest): Response {
-        throw UnsupportedOperationException("Not implemented")
+        val created = userService.createUser(request)
+        val location = URI.create("/api/v1/users/${created.id}")
+        return Response.created(location).entity(created).build()
     }
 
     @GET
     @Path("/{id}")
     fun getUserById(@PathParam("id") id: Long): UserResponse {
-        throw UnsupportedOperationException("Not implemented")
+        return userService.getUserById(id)
     }
 
     @GET
     @Path("/by-email")
     fun getUserByEmail(@QueryParam("email") email: String): UserResponse {
-        throw UnsupportedOperationException("Not implemented")
+        return userService.getUserByEmail(email)
     }
 
     @PUT
     @Path("/{id}")
     fun updateUser(@PathParam("id") id: Long, @Valid request: UpdateUserRequest): UserResponse {
-        throw UnsupportedOperationException("Not implemented")
+        return userService.updateUser(id, request)
     }
 
     @DELETE
     @Path("/{id}")
     fun deleteUser(@PathParam("id") id: Long): Response {
-        throw UnsupportedOperationException("Not implemented")
+        userService.deleteUser(id)
+        return Response.noContent().build()
     }
 
     @GET
     @Path("/{id}/family")
     fun getDirectFamily(@PathParam("id") id: Long): List<UserResponse> {
-        throw UnsupportedOperationException("Not implemented")
+        return userService.getDirectFamily(id)
     }
 }

@@ -14,6 +14,23 @@ class AddressRepository : PanacheRepository<Address> {
         apartment: String?,
         postalCode: String?
     ): Address? {
-        throw UnsupportedOperationException("Not implemented")
+        val query = StringBuilder("LOWER(country) = LOWER(?1) AND LOWER(city) = LOWER(?2) AND LOWER(street) = LOWER(?3) AND LOWER(building) = LOWER(?4)")
+        val params = mutableListOf<Any>(country, city, street, building)
+
+        if (apartment != null) {
+            params.add(apartment)
+            query.append(" AND LOWER(apartment) = LOWER(?${params.size})")
+        } else {
+            query.append(" AND apartment IS NULL")
+        }
+
+        if (postalCode != null) {
+            params.add(postalCode)
+            query.append(" AND LOWER(postalCode) = LOWER(?${params.size})")
+        } else {
+            query.append(" AND postalCode IS NULL")
+        }
+
+        return find(query.toString(), *params.toTypedArray()).firstResult()
     }
 }

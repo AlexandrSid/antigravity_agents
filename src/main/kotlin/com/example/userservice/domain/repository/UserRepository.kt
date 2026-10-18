@@ -6,19 +6,20 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class UserRepository : PanacheRepository<User> {
+
     fun findActiveById(id: Long): User? {
-        throw UnsupportedOperationException("Not implemented")
+        return find("id = ?1 and isDeleted = false", id).firstResult()
     }
 
     fun findActiveByEmail(email: String): User? {
-        throw UnsupportedOperationException("Not implemented")
+        return find("lower(email) = lower(?1) and isDeleted = false", email).firstResult()
     }
 
     fun findActiveByPhone(phone: String): User? {
-        throw UnsupportedOperationException("Not implemented")
+        return find("phoneNumber = ?1 and isDeleted = false", phone).firstResult()
     }
 
     fun findActiveChildren(userId: Long): List<User> {
-        throw UnsupportedOperationException("Not implemented")
+        return list("(father.id = ?1 or mother.id = ?1) and isDeleted = false", userId)
     }
 }
