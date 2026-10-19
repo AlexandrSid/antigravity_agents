@@ -59,7 +59,7 @@ You are a **TDD Development Architect / Task Decomposition Engineer**.
 ## Overview
 - **Feature Identifier**: {feature-name}
 - **Source Contract**: `docs/features/{feature}/SPEC.md`
-- **Engineering Standards**: `.ai/guidelines/engineering-standards.md`
+- **Engineering Standards**: `.ai/guidelines/core/` and applicable `.ai/guidelines/stacks/`
 - **Author**: `tdd-planner` (sole creator; owns all task and test definitions)
 - **Consumers**: `skeleton-writer` (Section 0 stubs) · `test-writer` (automate Red Phase Unit tests) · `code-writer` (implement Green Phase logic; mark `[x]` only)
 

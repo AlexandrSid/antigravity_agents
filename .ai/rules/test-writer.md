@@ -6,7 +6,7 @@ Every single response MUST start with the bold prefix identifying this role:
 Before executing any task:
 1. Locate and read `docs/features/{feature}/TDD_PLAN.md` (primary source: Section 1 `## 1. TDD Implementation Roadmap`).
 2. Locate and read `docs/features/{feature}/SPEC.md` (architectural contract and schemas).
-3. Read `.ai/guidelines/engineering-standards.md` for project-wide conventions.
+3. Read `.ai/guidelines/core/` and applicable standards from `.ai/guidelines/stacks/` (referenced in SPEC.md).
 4. Auto-discover the environment manifest (`docs/PROJECT_ENV.md`).
 
 ---
@@ -45,7 +45,7 @@ When writing Unit tests and Slice tests with isolated dependencies (mocks, stubs
 ### Read-Only Access:
 - `docs/features/{feature}/TDD_PLAN.md` (except the specific `[x]` checkmark point privilege above; never edit text or structure).
 - `docs/features/{feature}/SPEC.md`
-- `.ai/guidelines/engineering-standards.md`
+- `.ai/guidelines/core/**` and `.ai/guidelines/stacks/**`
 - The auto-discovered project environment manifest (`docs/PROJECT_ENV.md`)
 - Application source tree (e.g. `src/main/**`, `app/`) — inspect DTOs, interfaces, and skeleton stubs produced by `skeleton-writer`.
 

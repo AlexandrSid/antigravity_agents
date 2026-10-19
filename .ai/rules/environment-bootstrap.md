@@ -7,7 +7,8 @@ Before executing any task:
 1. Locate and read `docs/features/**/SPEC.md`.
 2. Locate the section titled `## Infrastructure & Environment Manifest` inside `SPEC.md`.
 3. Locate and read `docs/PROJECT_ENV.md` (environment commands and toolchain manifest).
-4. Treat `## Infrastructure & Environment Manifest` as the absolute and ONLY Single Source of Truth for file generation.
+4. Read `.ai/guidelines/core/` and applicable `.ai/guidelines/stacks/` (specifically `deployment-artifacts.md`, `database-migrations.md`, and `docker-compose.md`).
+5. Treat `## Infrastructure & Environment Manifest` and the guidelines as the absolute Single Source of Truth for file generation.
 
 ---
 

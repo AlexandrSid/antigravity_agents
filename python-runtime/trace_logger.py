@@ -218,3 +218,23 @@ def session_totals(trace_file: Path) -> dict:
         "total_cost_usd":     round(sum(e.get("cost_usd", 0.0) for e in entries), 6),
         "total_duration_sec": round(sum(e.get("duration_sec", 0.0) for e in entries), 3),
     }
+
+
+def estimate_tokens(text: str) -> int:
+    """Heuristic token estimator (~3.5 chars per token for code/markdown)."""
+    if not text:
+        return 0
+    return max(1, int(len(text) / 3.5))
+
+
+def estimate_files_tokens(file_paths: list[Path]) -> int:
+    """Estimates total tokens across a list of existing files."""
+    total_chars = 0
+    for p in file_paths:
+        if p.exists() and p.is_file():
+            try:
+                total_chars += len(p.read_text(encoding="utf-8", errors="replace"))
+            except Exception:
+                pass
+    return estimate_tokens(" " * total_chars)
+

@@ -141,6 +141,8 @@ Dynamically adapt the concrete schema and syntax to the derived tech stack, adhe
 
 ---
 
+---
+
 ## 6. ARTIFACT FORMAT (`docs/PROJECT_ENV.md`)
 Derive concrete commands from the tech stack in `docs/PRD.md` §1.1. Do not invent a toolchain that contradicts the PRD. Downstream writer agents must **auto-discover** this manifest — keep the title and field labels below stable.
 
@@ -151,11 +153,25 @@ Derive concrete commands from the tech stack in `docs/PRD.md` §1.1. Do not inve
 - **Service Identifier**: {service-name}
 - **Tech Stack**: {Derived from PRD §1.1}
 
+## Toolchain Prerequisites
+- **Runtime**: {Exact runtime version, e.g. JDK 21 / Python 3.11}
+- **Environment Variables**: {e.g. JAVA_HOME="..."}
+- **Daemon Requirements**: {e.g. Docker Daemon running}
+
+## Preflight Verification Command
+- **Preflight Check**: `python python-runtime/preflight_check.py`
+
 ## Execution Commands
-- **Compile / Build Check**: {Exact command, e.g. ./gradlew compileJava}
-- **Run All Tests**: {Exact command, e.g. ./gradlew test}
-- **Run Single Test**: {Exact command, e.g. ./gradlew test --tests "{test_class}"}
-- **Database Migration**: {Exact command, e.g. ./gradlew flywayMigrate}
+- **Compile / Build Check**: {Exact command, e.g. .\gradlew.bat compileKotlin}
+- **Unit / Slice Test**: {Exact command, e.g. .\gradlew.bat test}
+- **Integration / E2E Test**: {Exact command, e.g. .\gradlew.bat test --tests "*IntegrationTest"}
+- **Run Single Test**: {Exact command, e.g. .\gradlew.bat test --tests "{test_class}"}
+- **Database Migration**: {Exact command, e.g. .\gradlew.bat flywayMigrate}
+
+## Pre-Approved Command Allowlist
+- `{command 1}`
+- `{command 2}`
+- `{command 3}`
 ````
 
 ---
@@ -165,7 +181,7 @@ Derive concrete commands from the tech stack in `docs/PRD.md` §1.1. Do not inve
 2. Communication pattern, interaction semantics, and schemas derived dynamically from PRD context with zero hardcoded protocol assumptions.
 3. Zero-guessing enforced: any missing business rules escalated and resolved with the user.
 4. All `[AI-ASSUMPTION]` tags propagated with `[Attention Needed for Implementer]`.
-5. Finalized specification persisted at `docs/features/{feature}/SPEC.md`.
+5. Finalized specification persisted at `docs/features/{feature}/SPEC.md`, including `## Applicable Technical Standards` declaring Core and relevant Stack standards from `.ai/guidelines/`.
 6. All state mutations, persistence updates, and side-effects/events explicitly detailed in Section 2.2 for QA test coverage.
-7. Файл `docs/PROJECT_ENV.md` успешно создан/обновлен на основе выбранного стека из `docs/PRD.md` §1.1 и содержит актуальные команды сборки, тестирования и миграций.
-8. Раздел `## Infrastructure & Environment Manifest` полностью оформлен внутри `SPEC.md` по всем 4 обязательным пунктам для передачи агенту `environment-bootstrap`.
+7. Файл `docs/PROJECT_ENV.md` успешно создан/обновлен на основе выбранного стека из `docs/PRD.md` §1.1 и содержит актуальные команды сборки, тестирования, миграций, секцию Prerequisites и `Pre-Approved Command Allowlist`.
+8. Раздел `## Infrastructure & Environment Manifest` полностью оформлен внутри `SPEC.md` по всем 4 обязательным пунктам для передачи агенту `environment-bootstrap` (включая версионированные Docker-шаблоны и healthchecks).

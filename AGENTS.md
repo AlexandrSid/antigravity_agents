@@ -2,9 +2,9 @@
 This repository uses centralized AI agent definitions:
 - Core Roles: `.ai/rules/`
 - Greenfield Pipeline: `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`
-- Pipeline State Standard & Resume Protocol: `.ai/guidelines/pipeline-state-standards.md`
+- Pipeline State Standard & Resume Protocol: `.ai/guidelines/core/pipeline-state-standards.md`
 - LLM Routing: `.ai/agents-config.md`
-- Project Guidelines: `.ai/guidelines/`
+- Project Guidelines: `.ai/guidelines/core/` (universal) & `.ai/guidelines/stacks/` (modular)
 - Environment Orchestrators:
   - Antigravity IDE: `.antigravity/orchestrator.md` & `.agents/skills/sdlc-orchestrator/`
   - Cursor: `.cursor/rules/orchestrator.md`

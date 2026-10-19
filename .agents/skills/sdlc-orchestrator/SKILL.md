@@ -11,6 +11,16 @@ description: Universal Multi-Agent SDLC Orchestrator for Antigravity IDE. Discov
 
 ## Протокол работы оркестратора
 
+### 0. Pre-Flight Валидация окружения (Шаг 00)
+Перед инициализацией или возобновлением шагов конвейера:
+1. Запустите инструмент предварительной проверки:
+   ```bash
+   python python-runtime/preflight_check.py
+   ```
+2. **Fail-Fast**: Если проверка завершилась с ошибкой, немедленно остановите работу и выведите пользователю предложенные команды настройки системных переменных (`JAVA_HOME`, Docker daemon, etc.). Не начинайте генерацию кода на невалидном окружении!
+
+---
+
 ### 1. Определение фичи и целевого пайплайна
 1. **Имя фичи (`feature`)**:
    - Извлеките имя разрабатываемой фичи/модуля из запроса пользователя (например, `user-service`, `auth`, `billing`).
@@ -48,11 +58,14 @@ description: Universal Multi-Agent SDLC Orchestrator for Antigravity IDE. Discov
 Для каждого шага конвейера:
 1. Загрузите контракт роли агента из `.ai/rules/{step.role_file}`.
 2. Проверьте физическое наличие всех файлов из колонки `Inputs`. Если хотя бы один вход отсутствует — остановите шаг с сообщением о нехватке артефакта.
-3. Сформируйте контекст задачи:
+3. Подключите стандарты:
+   - Универсальные стандарты из `.ai/guidelines/core/`.
+   - Технологические профили из `.ai/guidelines/stacks/`, объявленные в `SPEC.md` (секция `## Applicable Technical Standards`).
+4. Сформируйте контекст задачи:
    - Системная роль: содержимое `.ai/rules/{step.role_file}`.
    - Входные данные: строго файлы из `Inputs`.
    - Задание: создание файлов из колонки `Outputs` строго в границах разрешённого `Write Scope`.
-4. Выполните шаг (или делегируйте субагенту).
+5. Выполните шаг (или делегируйте субагенту). Телеметрия и профилирование вызовов фиксируются автоматически системным хуком `.agents/hooks.json`.
 
 ---
 
@@ -74,7 +87,7 @@ description: Universal Multi-Agent SDLC Orchestrator for Antigravity IDE. Discov
    - Обновите `docs/features/{feature}/PIPELINE_STATE.md`:
      - Переключите чекбокс шага в `[x] COMPLETED`.
      - Запишите Commit SHA, среду `antigravity` и время завершения.
-   - Запишите событие в `docs/features/{feature}/EXECUTION_TRACE.json`.
+   - Запишите событие в `docs/features/{feature}/EXECUTION_TRACE.json` и проверьте сводку в `PROFILING_SUMMARY.md`.
 
 ---
 

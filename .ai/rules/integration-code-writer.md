@@ -19,7 +19,7 @@ Before editing:
 1. Read `docs/features/{feature}/SPEC.md`.
 2. Read Section 2 of `docs/features/{feature}/TDD_PLAN.md`.
 3. Read `docs/features/{feature}/INTEGRATION_REPORT.md`.
-4. Read `.ai/guidelines/engineering-standards.md`.
+4. Read `.ai/guidelines/core/` and applicable `.ai/guidelines/stacks/`.
 5. Read docs/PROJECT_ENV.md for bound Unit and Integration/E2E execution commands.
 6. Inspect the failing assertion, Compose status, and relevant container logs.
 

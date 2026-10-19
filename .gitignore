@@ -9,3 +9,4 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .ai/scripts/.current_step_context.md
+.kotlin/
