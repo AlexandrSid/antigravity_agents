@@ -90,6 +90,24 @@
 - [ ] **Skill `db_schema_inspector`**: Прямой запрос к DDL и выполнение `EXPLAIN ANALYZE` из локального Docker-контейнера.
 - [ ] **Skill `openapi_diff_checker`**: Сравнение фактического Spring REST Контроллера с контрактом в `SPEC.md`.
 
+### Стадия 4.3: Библиотека промышленных стандартов (Core Production Stacks)
+- [ ] **СУБД и персистентность**:
+  - `databases-relational/postgresql.md`: Схемы, search_path, partial indexes (`WHERE`), JSONB, pgvector, миграции Flyway/Liquibase.
+  - `databases-relational/mysql.md`: Особенности не-транзакционного DDL, кодировка `utf8mb4`, автоинкременты.
+- [ ] **Кэширование и In-Memory хранилища**:
+  - `caching/redis.md`: Стратегии Cache-Aside / Write-Through, структуры данных (String, Hash, Set, ZSET), TTL, eviction policies, распределённые блокировки (Redlock), rate-limiting.
+- [ ] **Полнотекстовый поиск**:
+  - `search-analytics/elasticsearch.md`: Маппинги, стемминг/анализаторы, bool queries, агрегации, векторный kNN поиск, ILM (Index Lifecycle Management).
+- [ ] **Брокеры сообщений и очереди**:
+  - `messaging-queues/kafka.md`: Партиционирование, ключи шардирования, consumer groups, idempotence, Schema Registry (Avro/Protobuf), DLQ, retry-топики.
+  - `messaging-queues/rabbitmq.md`: AMQP Exchanges (Direct, Topic, Fanout), Queues, Bindings, dead-letter exchanges (DLX), подтверждения (ack/nack).
+- [ ] **Фреймворки и языки**:
+  - `frameworks/spring-boot.md`: Spring Boot 3.x, Spring Data, Actuator, Profiles, Security, Testcontainers.
+  - `frameworks/fastapi.md`: Python 3.11+, Pydantic v2, lifespan, dependency injection, async I/O.
+- [ ] **Интеграционное тестирование**:
+  - `testing/testcontainers.md`: Docker-backed интеграционные тесты (Postgres, Redis, Kafka) с динамическими свойствами.
+  - `testing/wiremock.md`: Эмуляция внешних HTTP API и mock-серверы.
+
 ---
 
 ## 🟣 Фаза 5: Расширенные пайплайны и обработка исключений (Advanced SDLC)
@@ -106,6 +124,36 @@
   - Перейти в IDE для ручной правки.
   - Перезапустить шаг с измененным промптом/моделью.
   - Пропустить шаг (Skip).
+
+---
+
+## ⚪ Фаза 6: Полиглотная корпоративная экосистема (Polyglot Enterprise, Cloud Native & Security)
+> **Статус**: В бэклоге  
+> **Цель**: Масштабирование фреймворка на любые корпоративные языки программирования, распределённую аналитику, Kubernetes, API-шлюзы, безопасность и сквозной APM.
+
+### Стадия 6.1: Высокопроизводительные и мультистековые языки & фреймворки
+- [ ] **Rust**: `languages/rust.md` (Cargo workspaces, clippy, Tokio async, strict borrow checker) и `frameworks/axum.md` / `actix-web.md` (Tonic gRPC, sqlx).
+- [ ] **Go**: `languages/go.md` (Go modules, `context.Context`, горутины/каналы, `golangci-lint`) и `frameworks/gin.md` / `fiber.md` (GORM/sqlc, graceful shutdown).
+- [ ] **TypeScript / Node.js / Bun**: `languages/typescript.md` (strict mode, ESM) и `frameworks/nestjs.md` / `fastify.md` (Prisma, TypeORM, Vitest).
+- [ ] **C# / .NET**: `languages/csharp.md` (.NET 8/9, async/await, nullable reference types) и `frameworks/aspnet-core.md` (Minimal APIs, Entity Framework Core).
+
+### Стадия 6.2: NoSQL, Аналитика и специализированные хранилища
+- [ ] **ClickHouse**: `search-analytics/clickhouse.md` (Колоночная СУБД, MergeTree движки, партиционирование, сжатие, пакетные вставки, time-series аналитика).
+- [ ] **Документные и колоночные NoSQL**: `databases-nosql/mongodb.md` (Aggregation Pipelines, индексы), `databases-nosql/cassandra.md` (ScyllaDB, partition keys, Quorum).
+- [ ] **Графовые и встраиваемые СУБД**: `databases-nosql/neo4j.md` (Cypher, графовые модели), `databases-relational/sqlite.md` (WAL-режим, edge-сервисы).
+
+### Стадия 6.3: Инфраструктура, оркестрация и API-шлюзы
+- [ ] **Kubernetes & Cloud Native**: `infrastructure/kubernetes.md` (Deployments, StatefulSets, Services, Ingress, Probes, Resource limits/requests, HPA) и `infrastructure/helm.md` (Helm-чарты, Kustomize-оверлеи).
+- [ ] **API Gateways & Reverse Proxies**: `api-gateways/envoy.md`, `api-gateways/kong.md`, `api-gateways/traefik.md`, `api-gateways/nginx.md` (маршрутизация, rate-limiting, CORS, SSL-терминация).
+- [ ] **Infrastructure as Code (IaC)**: `infrastructure/terraform.md` (Terraform / OpenTofu декларативные модули и линтинг).
+- [ ] **Cloud-Native Messaging**: `messaging-queues/nats.md` (NATS JetStream, микросекундная латентность, pub/sub) и `messaging-queues/redis-streams.md`.
+
+### Стадия 6.4: Безопасность, Auth, Secrets & Observability
+- [ ] **Аутентификация и Identity**: `security-auth/keycloak.md` (IAM, OpenID Connect / OAuth2, SSO, управление realm/ролями), `security-auth/jwt.md` (PASETO, валидация на шлюзе), mTLS.
+- [ ] **Управление секретами**: `security-auth/vault.md` (HashiCorp Vault, динамические секреты для БД, PKI-генерация сертификатов).
+- [ ] **Распределённая наблюдаемость (APM)**: `observability/opentelemetry.md` (W3C TraceContext, OTel Collector), `observability/prometheus-grafana.md`, `observability/jaeger-tempo.md`, `observability/loki.md`.
+- [ ] **Непрерывное профилирование**: `observability/pyroscope.md` (Run-time CPU & memory continuous profiling).
+- [ ] **Нагрузочное тестирование**: `testing/k6.md` (сценарии k6, нагрузочные профили, SLO/SLA гейты).
 
 ---
 
