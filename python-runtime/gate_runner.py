@@ -155,6 +155,10 @@ def parse_project_env(env_file: Path) -> CommandManifest:
         for key, patterns in _SECTION_MARKERS.items():
             if not commands[key] and _match_section(stripped, patterns):
                 current_key = key
+                inline = re.findall(r"`([^`]+)`", stripped)
+                if inline:
+                    commands[current_key] = max(inline, key=len)
+                    current_key = None
                 break
         else:
             if current_key:
@@ -187,8 +191,12 @@ def parse_project_env(env_file: Path) -> CommandManifest:
 
 def _run_command(cmd: str, cwd: Path, timeout: int = 600) -> tuple[int, str]:
     try:
+        import os
+        run_cmd = cmd
+        if os.name == "nt" and run_cmd.startswith("./"):
+            run_cmd = ".\\" + run_cmd[2:]
         result = subprocess.run(
-            cmd,
+            run_cmd,
             shell=True,
             cwd=str(cwd),
             stdout=subprocess.PIPE,
