@@ -4,7 +4,7 @@ WORKDIR /workspace
 
 COPY gradle gradle
 COPY gradlew gradlew.bat build.gradle.kts settings.gradle.kts gradle.properties ./
-RUN ./gradlew --version
+RUN chmod +x gradlew && ./gradlew --version
 
 COPY src src
 RUN ./gradlew build -Dquarkus.package.jar.type=fast-jar -x test
@@ -21,4 +21,4 @@ EXPOSE 8080
 USER 1001
 
 ENV JAVA_OPTS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
-ENTRYPOINT ["java", "-jar", "/deployments/quarkus-run.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /deployments/quarkus-run.jar"]

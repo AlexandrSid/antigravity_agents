@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   h2-db:
     image: oscarfonts/h2:latest
@@ -8,7 +6,12 @@ services:
       - "9092:9092"
       - "8082:8082"
     environment:
-      H2_OPTIONS: -tcp -tcpAllowOthers -tcpPort 9092 -web -webAllowOthers -webPort 8082
+      H2_OPTIONS: -tcp -tcpAllowOthers -tcpPort 9092 -web -webAllowOthers -webPort 8082 -ifNotExists
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082 || exit 1"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
     volumes:
       - h2-data:/opt/h2-data
 
@@ -18,7 +21,8 @@ services:
       dockerfile: Dockerfile
     container_name: user-service
     depends_on:
-      - h2-db
+      h2-db:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
