@@ -1,9 +1,10 @@
 # Спецификация улучшений Фазы 2.1: Стандарты, Изоляция Docker, Observability и Устранение Friction (STAGE-2.1-IMPROVE)
 
-> **Статус**: Утверждено к реализации  
+> **Статус**: Выполнено (`[x]`)  
 > **Базовый документ**: [.ai/specs/STAGE_2_SPEC.md](file:///.ai/specs/STAGE_2_SPEC.md)  
 > **Целевая ветка**: `stage_2_improvements`  
-> **Основание**: Ретроспектива полного сквозного прогона Greenfield SDLC (`user-service`)
+> **Основание**: Ретроспектива полного сквозного прогона Greenfield SDLC (`user-service`)  
+> **Фактический статус**: Все 4 блока плана внедрения (декомпозиция стандартов, pre-flight валидатор, подсистема профилирования/хуков и обновление ролей) полностью реализованы и зафиксированы в кодовой базе.
 
 ---
 
@@ -292,19 +293,21 @@
 ## 6. План внедрения Фазы 2.1 (Action Plan)
 
 1. **Реорганизация каталога стандартов**:
-   - Создать `.ai/guidelines/core/` и разнести технологически-нейтральные стандарты (`architecture-standards.md`, `deployment-artifacts.md`, `database-migrations.md`, `environment-preflight.md`, `pipeline-state-standards.md`).
-   - Создать `.ai/guidelines/stacks/` с модульными профилями:
-     - `languages/kotlin.md`, `languages/java.md`.
-     - `frameworks/quarkus.md`.
-     - `databases/h2.md`, `databases/postgresql.md`.
-     - `infrastructure/docker-compose.md`.
+   - [x] Создать `.ai/guidelines/core/` и разнести технологически-нейтральные стандарты (`architecture-standards.md`, `deployment-artifacts.md`, `database-migrations.md`, `environment-preflight.md`, `pipeline-state-standards.md`).
+   - [x] Создать `.ai/guidelines/stacks/` с модульными профилями:
+     - [x] `languages/kotlin.md`, `languages/java.md`.
+     - [x] `frameworks/quarkus.md`.
+     - [x] `databases/h2.md`, `databases/postgresql.md`.
+     - [x] `infrastructure/docker-compose.md`.
+   - [x] Удалить устаревший монолитный файл `.ai/guidelines/engineering-standards.md` и перевести ссылки во всех ролях на точечные профили.
 2. **Создание утилит окружения**:
-   - `python-runtime/preflight_check.py`: инструмент валидации среды (Java 21, Docker, Git, Gradle).
-   - Кроссплатформенная доработка `gate_runner.py` для корректного поиска `.bat` и проброса `JAVA_HOME`.
+   - [x] `python-runtime/preflight_check.py`: инструмент валидации среды (Java 21, Docker, Git, Gradle) с выдачей fail-fast инструкций по исправлению `$env:JAVA_HOME`.
+   - [x] Кроссплатформенная доработка `gate_runner.py` для корректного поиска `.bat` скриптов на Windows и динамического маппинга `JAVA_HOME`.
 3. **Разработка подсистемы профилирования и хуков**:
-   - Создать `python-runtime/profiler_hook.py` (телеметрия, оценка токенов, сверка с allowlist).
-   - Создать `.agents/hooks.json` с регистрацией событий жизненного цикла Antigravity.
+   - [x] Создать `python-runtime/profiler_hook.py` (телеметрия, оценка токенов, логирование в `PROFILING_LOG.jsonl` и автоодобрение allowlist команд).
+   - [x] Создать `.agents/hooks.json` с регистрацией событий жизненного цикла Antigravity (`PreInvocation`, `PostInvocation`, `PreToolUse`, `PostToolUse`, `Stop`).
 4. **Обновление ролей агентов и шаблонов**:
-   - `.ai/rules/architect.md`: требование включения `Applicable Technical Standards` и `Pre-Approved Command Allowlist` в спецификации.
-   - `.ai/rules/environment-bootstrap.md` и `integration-test-writer.md`: соблюдение стандарта версионирования образов и изоляции томов Compose.
-   - `.agents/skills/sdlc-orchestrator/SKILL.md`: интеграция Pre-flight проверки перед стартом шага 01.
+   - [x] `.ai/rules/architect.md`: требование обязательного включения `Applicable Technical Standards` и `Pre-Approved Command Allowlist` в спецификации фичи.
+   - [x] `.ai/rules/environment-bootstrap.md` и `integration-test-writer.md`: соблюдение стандарта версионирования образов и изоляции томов Compose.
+   - [x] `.ai/rules/code-writer.md`, `test-writer.md`, `tdd-planner.md`, `integration-code-writer.md`: переход на декомпозированные стандарты `core/` и `stacks/`.
+   - [x] `.agents/skills/sdlc-orchestrator/SKILL.md`: интеграция Pre-flight проверки перед стартом шага 01, синхронизация со стандартами состояний и соблюдение Write Scope.

@@ -1,8 +1,9 @@
 # Спецификация реализации Фазы 2: Orchestrator Core (STAGE-2-SPEC)
 
-> **Статус**: Утверждено  
+> **Статус**: Выполнено (`[x]`)  
 > **Целевая ветка**: `stage_2_improvements`  
-> **Базовый стандарт**: Zero External Dependencies (Python 3 Standard Library) & Subscription-First
+> **Базовый стандарт**: Zero External Dependencies (Python 3 Standard Library) & Subscription-First  
+> **Фактический статус**: Ядро рантайма полностью реализовано в `python-runtime/`, валидировано кроссплатформенно (Windows/POSIX) и верифицировано в сквозном Greenfield SDLC конвейере (`user-service`).
 
 ---
 
@@ -140,15 +141,15 @@ python .ai/scripts/orchestrator.py \
 
 ---
 
-## 6. Модульная структура скриптов оркестратора (`.ai/scripts/`)
+## 6. Модульная структура скриптов оркестратора (`python-runtime/`)
 
-```text
-.ai/scripts/
-├── pipeline_parser.py     # Парсинг Markdown таблицы конвейера и валидация схемы
-├── config_resolver.py     # Чтение agents-config.md, local overrides и детекция сред (.antigravity, .cursor)
-├── tool_shell.py          # Bounded Local Tool Shell (read_artifact, apply_patch, complete_step) и Write Scope
-├── gate_runner.py         # Парсинг PROJECT_ENV.md и валидация Quality Gates (TDD Red/Green)
-├── git_engine.py          # Checkpoints, branch protection (agent-feature-*), rollback и commits
-├── trace_logger.py        # Запись EXECUTION_TRACE.json и Price Registry
-└── orchestrator.py        # Главная точка входа CLI, цикл выполнения шагов и HITL Fallback
-```
+- [x] **`pipeline_parser.py`** — Прямой парсинг Markdown таблицы конвейера (`.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`), валидация схемы колонок (`Step`, `Agent Role`, `Inputs`, `Outputs`, `Model Profile`, `Gate`).
+- [x] **`config_resolver.py`** — Чтение профилей моделей из `agents-config.md`, локальных оверрайдов `agent-config.local.md` и детекция платформ (.antigravity, .cursor, .windsurf).
+- [x] **`tool_shell.py`** — Bounded Local Tool Shell (`read_artifact`, `apply_patch`, `complete_step`), валидация границ `Write Scope` по ролям агентов и жесткий лимит 5 итераций на шаг.
+- [x] **`gate_runner.py`** — Динамический резолвинг команд верификации из `PROJECT_ENV.md`, кроссплатформенный запуск (.bat / .sh) и валидация Quality Gates (`COMPILE_CHECK`, `UNIT_RED_PHASE`, `UNIT_GREEN_PHASE`, `INTEGRATION_GREEN_PHASE`).
+- [x] **`git_engine.py`** — Защита веток (`agent-feature-*`, `agent-bugfix-*`), создание контрольных точек (Checkpoints), автоматический откат (`git reset --hard`) при падении гейтов и атомарные коммиты успешных шагов.
+- [x] **`trace_logger.py`** — Запись `EXECUTION_TRACE.json`, расчет расхода токенов и стоимости по встроенному реестру цен (Price Registry).
+- [x] **`standalone_runner.py`** — Главная CLI-точка входа (`--pipeline`, `--feature`, `--mode auto|interactive`, `--git-auto`), цикл шагов и Human-in-the-Loop Fallback меню.
+- [x] **`preflight_check.py`** — Pre-flight проверка зависимостей окружения (JDK 21, Docker, Git, Gradle) с fail-fast рекомендациями.
+- [x] **`profiler_hook.py`** — Интеграция с хуками IDE Antigravity (`.agents/hooks.json`), автоодобрение allowlist команд и сбор метрик в реальном времени.
+- [x] **In-IDE Orchestrators** — Универсальные правила и скилл оркестрации для интерактивных сессий (`.agents/skills/sdlc-orchestrator/SKILL.md`, `.antigravity/orchestrator.md`, `.cursor/rules/orchestrator.md`).

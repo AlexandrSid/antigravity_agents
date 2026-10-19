@@ -22,38 +22,38 @@
 
 ---
 
-## 🟡 Фаза 2: Скриптинг автозапуска, изоляция контекстов и управление состоянием (Orchestrator Core)
-> **Статус**: В плане / Текущая фаза (ветка `stage_2_improvements`)  
-> **Цель**: Переход от ручного переключения контекстов в IDE к детерминированному CLI/API-оркестратору с изолированными вызовами LLM, Bounded Tool Shell, автоматическими откатами и трекингом расходов.  
-> **Техническая спецификация**: [.ai/specs/STAGE_2_SPEC.md](file:///.ai/specs/STAGE_2_SPEC.md) | [STAGE-2.1-IMPROVE](file:///.ai/specs/STAGE_2.1_IMPROVE.md)
+## 🟢 Фаза 2: Скриптинг автозапуска, изоляция контекстов и управление состоянием (Orchestrator Core)
+> **Статус**: Выполнено (`[x]`)  
+> **Результат**: Двухрежимный рантайм (Python CLI Core + In-IDE Orchestrator), чистая изоляция контекстов (Stateless Execution), Bounded Tool Shell с контролем Write Scope, парсинг пайплайнов из Markdown SSOT, динамические Quality Gates с TDD Red/Green семантикой, Git Checkpoints & Rollback, трекинг токенов/стоимости (`EXECUTION_TRACE.json`) и подсистема профилирования с хуками IDE (ветка `stage_2_improvements`).  
+> **Техническая спецификация**: [.ai/specs/STAGE_2_SPEC.md](file:///.ai/specs/STAGE_2_SPEC.md) | [.ai/specs/STAGE_2.1_IMPROVE.md](file:///.ai/specs/STAGE_2.1_IMPROVE.md)
 
 ### Стадия 2.1: Изоляция контекста и механизм взаимодействия (Execution Engine Protocol)
-- [ ] **Архитектура чистого старта (Stateless Execution)**: Каждый вызов агента происходит в изолированном контекстном окне, формируемом строго из 3 элементов: системная роль (`.ai/rules/{agent}.md`), входные артефакты шага по пайплайну и точный промпт-задание.
-- [ ] **Детерминированный Bounded Local Tool Shell**: Предоставление агенту стандартизированного минимального набора локальных инструментов (`read_artifact`, `apply_patch`, `complete_step`) через JSON-Schema Tool Calling или текстовый DSL-протокол для моделей без нативных инструментов.
-- [ ] **Контроль границ записи (Write Scope Enforcement)**: Проверка пути каждого файла при вызове `apply_patch` на соответствие разрешённому Write Scope из роли агента (`.ai/rules/{agent}.md`). При нарушении — отказ инструмента (`Permission denied: File outside Write Scope`).
-- [ ] **Ограничение ReAct-цикла (Bounded Iterations)**: Лимит максимум 5 итераций вызова инструментов на один шаг для предотвращения зацикливания и перерасхода токенов.
+- [x] **Архитектура чистого старта (Stateless Execution)**: Каждый вызов агента происходит в изолированном контекстном окне, формируемом строго из 3 элементов: системная роль (`.ai/rules/{agent}.md`), входные артефакты шага по пайплайну и точный промпт-задание.
+- [x] **Детерминированный Bounded Local Tool Shell**: Предоставление агенту стандартизированного минимального набора локальных инструментов (`read_artifact`, `apply_patch`, `complete_step`) через JSON-Schema Tool Calling или текстовый DSL-протокол для моделей без нативных инструментов (`python-runtime/tool_shell.py`).
+- [x] **Контроль границ записи (Write Scope Enforcement)**: Проверка пути каждого файла при вызове `apply_patch` на соответствие разрешённому Write Scope из роли агента (`.ai/rules/{agent}.md`). При нарушении — отказ инструмента (`Permission denied: File outside Write Scope`).
+- [x] **Ограничение ReAct-цикла (Bounded Iterations)**: Лимит максимум 5 итераций вызова инструментов на один шаг для предотвращения зацикливания и перерасхода токенов.
 
 ### Стадия 2.2: Динамическая маршрутизация моделей и манифест (Dynamic LLM Binding & Manifest)
-- [ ] **Парсинг конфигураций (TOML in Markdown)**: Программный парсинг секций профилей (`[REASONING_HEAVY]`, `[STRICT_CODEGEN]`, `[FAST_EXECUTION]`) с параметрами `provider`, `preferred_model`, `fallback_model`, `temperature`, `max_output_tokens` из `.ai/agents-config.md` с приоритетом локального `.ai/agent-config.local.md`.
-- [ ] **Динамический биндинг провайдеров**: Подключение облачных API (OpenAI, Anthropic и др.) и локальных шлюзов (Ollama, LM Studio) в соответствии с назначенными профилями.
+- [x] **Парсинг конфигураций (TOML in Markdown)**: Программный парсинг секций профилей (`[REASONING_HEAVY]`, `[STRICT_CODEGEN]`, `[FAST_EXECUTION]`) с параметрами `provider`, `preferred_model`, `fallback_model`, `temperature`, `max_output_tokens` из `.ai/agents-config.md` с приоритетом локального `.ai/agent-config.local.md` (`python-runtime/config_resolver.py`).
+- [x] **Динамический биндинг провайдеров**: Подключение сред исполнения (`native` Antigravity/Cursor/Claude Code) и интерфейсов внешних/локальных шлюзов (Ollama, LM Studio) в соответствии с назначенными профилями.
 
 ### Стадия 2.3: Двухрежимная оркестрация и парсинг пайплайна (Dual-Mode & Pipeline Parsing)
-- [ ] **Парсинг пайплайна из Markdown (SSOT)**: Прямой парсер таблицы шагов из `.ai/GREENFIELD_SDLC_PIPELINE.md` с валидацией схемы колонок (`Step`, `Agent Role`, `Inputs`, `Outputs`, `Model Profile`, `Gate`). Исключение дублирующих JSON/YAML файлов.
-- [ ] **CLI Авто-режим с обязательным флагом `--feature`**: Сквозной запуск сценария:
-  `python .ai/scripts/orchestrator.py --pipeline .ai/GREENFIELD_SDLC_PIPELINE.md --feature <name> --mode auto`
-- [x] **IDE Ручной режим (Ad-hoc)**: Сохранение ручного вызова через IDE как резервного/отладочного (выполнено в Фазе 1).
-- [ ] **Точки останова (Interactive Breakpoints)**: Поддержка флага `--interactive` для пошагового подтверждения перехода между этапами.
-- [ ] **Human-in-the-Loop Fallback**: При исчерпании лимита самоисправления (3 неудачных попытки) переход в интерактивную паузу с меню:
+- [x] **Парсинг пайплайна из Markdown (SSOT)**: Прямой парсер таблицы шагов из `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md` с валидацией схемы колонок (`Step`, `Agent Role`, `Inputs`, `Outputs`, `Model Profile`, `Gate`). Исключение дублирующих JSON/YAML файлов (`python-runtime/pipeline_parser.py`).
+- [x] **CLI Авто-режим с обязательным флагом `--feature`**: Сквозной запуск сценария:
+  `python python-runtime/standalone_runner.py --pipeline .ai/pipelines/GREENFIELD_SDLC_PIPELINE.md --feature <name> --mode auto`
+- [x] **IDE Ручной и Оркестрируемый режим**: Сохранение ручного вызова через IDE и поддержка внутри-IDE оркестратора (`.agents/skills/sdlc-orchestrator/SKILL.md`, `.antigravity/orchestrator.md`, `.cursor/rules/orchestrator.md`).
+- [x] **Точки останова (Interactive Breakpoints)**: Поддержка интерактивного режима (`--mode interactive` в standalone runner и интерактивное подтверждение шагов в IDE-оркестраторе).
+- [x] **Human-in-the-Loop Fallback**: При исчерпании лимита самоисправления (3 неудачных попытки) переход в интерактивную паузу с меню:
   `[1] Retry manually in IDE (Pause & Wait)`, `[2] Force retry with elevated reasoning model`, `[3] Abort pipeline execution`.
 
 ### Стадия 2.4: Безопасность, TDD Quality Gates, Rollbacks и Observability
-- [ ] **Динамический резолвинг команд Quality Gates**: Парсинг секции `Execution & Verification Commands` из `docs/PROJECT_ENV.md` и связывание колонок `Gate` из пайплайна с реальными командами сборщика (`COMPILE_CHECK`, `UNIT_RED_PHASE`, `UNIT_GREEN_PHASE`, `INTEGRATION_GREEN_PHASE`).
-- [ ] **Раздельная TDD-семантика проверок**:
+- [x] **Динамический резолвинг команд Quality Gates**: Парсинг секции `Execution & Verification Commands` из `PROJECT_ENV.md` / манифеста окружения и связывание колонок `Gate` из пайплайна с реальными командами сборщика (`COMPILE_CHECK`, `UNIT_RED_PHASE`, `UNIT_GREEN_PHASE`, `INTEGRATION_GREEN_PHASE`) в `python-runtime/gate_runner.py`.
+- [x] **Раздельная TDD-семантика проверок**:
   - `UNIT_RED_PHASE` (Шаг 05): компиляция успешна (exit code = 0), падение тестов вызвано исключительно `AssertionError` / `UnsupportedOperationException`.
   - `GREEN_PHASE` (Шаги 06, 08): компиляция успешна и 100% тестов пройдены (exit code = 0).
-- [ ] **Git Checkpoints & Self-Correction Loop**: Создание снимка Git (`git stash create` / Commit SHA) перед шагом. При провале Gate — `git reset --hard <checkpoint_sha>` и до 3 попыток ретрая с передачей стектрейса/лога ошибки агенту.
-- [ ] **Защита веток и авто-ветвление (Branch Protection)**: Работа исключительно в ветках вида `agent-feature-{feature}` (или `agent-bugfix-*`). Поддержка флага `--git-auto` (автосоздание и переключение на ветку) или блокировка запуска на `main`/`master`/`stage*` с подсказкой команды. Пошаговые коммиты успешных шагов.
-- [ ] **Cost & Execution Tracking (`EXECUTION_TRACE.json`)**: Генерация посессионного трейса `docs/features/{feature}/EXECUTION_TRACE.json` с фиксацией времени начала/окончания, длительности, токенов и расчетной стоимости `cost_usd` по встроенному Price Registry (для облачных моделей) и 0.0 (для локальных моделей).
+- [x] **Git Checkpoints & Self-Correction Loop**: Создание снимка Git (`git stash create` / Commit SHA) перед шагом. При провале Gate — `git reset --hard <checkpoint_sha>` и до 3 попыток ретрая с передачей стектрейса/лога ошибки агенту (`python-runtime/git_engine.py`).
+- [x] **Защита веток и авто-ветвление (Branch Protection)**: Работа исключительно в ветках вида `agent-feature-{feature}` (или `agent-bugfix-*`). Поддержка флага `--git-auto` (автосоздание и переключение на ветку) или блокировка запуска на `main`/`master`/`stage*` с подсказкой команды. Пошаговые коммиты успешных шагов.
+- [x] **Cost & Execution Tracking (`EXECUTION_TRACE.json`)**: Генерация посессионного трейса `docs/features/{feature}/EXECUTION_TRACE.json` с фиксацией времени начала/окончания, длительности, токенов и расчетной стоимости `cost_usd` по встроенному Price Registry (для облачных моделей) и 0.0 (для локальных моделей).
 
 ---
 
@@ -81,9 +81,9 @@
 > **Цель**: Переход от текстовых просьб в промптах к программно гарантированным проверкам и урезанию контекста.
 
 ### Стадия 4.1: Автоматические перехватчики (Hooks)
-- [ ] **Pre-Agent Hook**: Проверка наличия всех входных артефактов до запуска LLM (блокировка вызова при их отсутствии).
-- [ ] **Post-Agent Hook**: Автоматический запуск сборки и тестов (`gradle test` из `PROJECT_ENV.md`) сразу после генерации. Передача стектрейса обратно агенту при ошибке.
-- [ ] **Guardrail Hook**: Программная блокировка несанкционированных изменений (например, запрет создания Flyway/Liquibase миграций на шаге 08 — Zero Architectural Drift).
+- [x] **Pre-Agent Hook**: Проверка наличия всех входных артефактов и валидация готовности окружения (JDK 21, Docker, Git, Gradle) до запуска LLM (`python-runtime/preflight_check.py` и `sdlc-orchestrator`).
+- [x] **Post-Agent Hook**: Автоматический запуск сборки и верификации через `gate_runner.py` сразу после генерации шага. Сбор телеметрии вызовов инструментов и событий через `profiler_hook.py` (PostToolUse / PostInvocation).
+- [x] **Guardrail Hook**: Программная блокировка несанкционированных изменений (Write Scope в `tool_shell.py`, запрет прямого коммита в защищенные ветки в `git_engine.py`, сверка с Pre-Approved Command Allowlist в `.agents/hooks.json`).
 
 ### Стадия 4.2: Инструменты агентов (Skills / Tools)
 - [ ] **Skill `ast_structure_extractor`**: Извлечение только сигнатур публичных методов и аннотаций классов для урезания передаваемого кода на 90%.
