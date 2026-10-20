@@ -1,0 +1,18 @@
+[
+  {
+    "step_id": "01",
+    "agent_role": "Architect",
+    "model_used": "claude-sonnet-4",
+    "provider": "anthropic",
+    "timestamp_start": "2026-10-20T11:38:00Z",
+    "timestamp_end": "2026-10-20T11:41:10Z",
+    "duration_sec": 190.0,
+    "tokens": {
+      "prompt_tokens": 4250,
+      "completion_tokens": 5700,
+      "total_tokens": 9950
+    },
+    "cost_usd": 0.09825,
+    "exit_status": "SUCCESS"
+  }
+]
