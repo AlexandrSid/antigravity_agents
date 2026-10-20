@@ -1,154 +1,121 @@
 # Product Requirements Document (PRD)
 
-## 1. Target Iteration Goals
-- **Project / Feature Name**: User Service (Full CRUD, Direct Lookup & Family Graph)
-- **Target Iteration**: MVP / Sprint 1
-- **Core Objective**: Deliver a production-grade, containerized Kotlin / Quarkus REST API for managing users with demographic data, normalized shared addresses, biological family ties, soft deletion, direct lookup by ID or normalized email, direct-family retrieval, and an automated Flyway migration seeding 1,000 users across 20 distinct locations.
-- **Key Success Metrics**:
-  - Full CRUD operations implemented: Create (`POST`), Read (`GET`), Update (`PUT`), and Soft Delete (`DELETE`).
-  - Direct read endpoints implemented for lookup by ID, lookup by normalized email, and retrieval of a user's active direct family.
-  - Flyway migration script successfully initializing schema and 1,000 interconnected users with consistent parental age relationships.
-  - Multi-container Docker Compose deployment (Quarkus app + separate H2 TCP Server container).
-  - Clean 3-tier architecture: `Controller` / `Resource` -> `Service` -> `Repository`.
-
-### 1.1 Target Tech Stack & Environment Constraints
-*(Discovered during user interview - serves as Source of Truth for downstream agents)*
-- **Primary Runtime / Language**: Kotlin 1.9+ / 2.0 (Target JVM: 21)
-- **Build Tool**: Gradle with Kotlin DSL (`build.gradle.kts`) with Quarkus Gradle Plugin (`io.quarkus`)
-- **Frameworks & Libraries**:
-  - Quarkus 3.x (Quarkus REST / RESTEasy Reactive, Hibernate ORM with Panache Kotlin, Jakarta Validation, Jackson Kotlin)
-  - Flyway (database schema management and seed data migrations via `quarkus-flyway`)
-  - Kotlin standard library, reflection, and Jackson Kotlin module (replacing Lombok with Kotlin native properties, data classes, and default arguments)
-- **Data Persistence / Storage**: H2 Database running in TCP Server mode as an independent Docker container (accessed via Quarkus JDBC/Hibernate)
-- **Communication Protocol**: REST API (HTTP/JSON)
-- **Deployment & Containerization**: Docker Compose (`docker-compose.yml`) containing:
-  - `user-service`: Quarkus application container (JVM mode / fast-jar)
-  - `h2-db`: Standalone H2 TCP server container
-- **Cross-Cutting Architectural Constraints**:
-  - Strict 3-tier architecture: Controller/Resource (`UserController`), Service (`UserService`), Repository (`UserRepository`, `AddressRepository` using Panache Kotlin).
-  - API boundaries use DTOs only (Kotlin `data class`); persistence entities are never serialized directly.
-  - JPA entities are authored as regular Kotlin classes with `allopen` and `noarg` plugin support (avoiding `data class` for JPA entities to prevent identity and lazy loading pitfalls).
-  - All failures use RFC 7807 Problem Details (`application/problem+json`) according to project engineering standards.
-  - Configuration strictly managed via standard Quarkus config profiles (`application.properties` or `application.yaml` with `%docker.` overrides).
-  - Soft-delete strategy: users are never removed from disk; state is marked via `is_deleted = true`.
+## Сервис: `link-shortener`
 
 ---
 
-## 2. Domain Entities & Validation Matrix
+## 1. Контекст и цель
 
-### 2.1 Entity: `User`
-Represents an individual with demographic data, address reference, biological family ties, and soft-delete state.
+Сервис сокращения ссылок позволяет создавать короткие 8-символьные URL-адреса, перенаправляющие на оригинальные длинные ссылки.
 
-| Entity | Field | Type | Required | Constraints | Scope | Status / Assumption |
-|---|---|---|---|---|---|---|
-| `User` | `id` | `Long` | No (Generated) | Auto-increment primary key | `[TARGET]` | Confirmed |
-| `User` | `firstName` | `String` | Yes | `@NotBlank`, `@Size(min=1, max=100)` | `[TARGET]` | Confirmed |
-| `User` | `lastName` | `String` | Yes | `@NotBlank`, `@Size(min=1, max=100)` | `[TARGET]` | Confirmed |
-| `User` | `birthDate` | `LocalDate` | Yes | `@NotNull`, `@Past` | `[TARGET]` | Confirmed |
-| `User` | `email` | `String` | Yes | `@NotBlank`, `@Email`; normalized to lowercase before persistence; unique among active users after normalization | `[TARGET]` | Confirmed |
-| `User` | `phoneNumber` | `String` | No | Normalized before persistence to E.164 (`+{countryCode}{subscriberNumber}`) without spaces, parentheses, or separators; persisted value matches `^\\+[1-9]\\d{6,14}$`; unique among active users after normalization if present | `[TARGET]` | Confirmed |
-| `User` | `address` | `Address` | No | Foreign Key `address_id` (`ManyToOne`) | `[TARGET]` | Confirmed (Shared across users) |
-| `User` | `father` | `User` | No | Foreign Key `father_id` (`ManyToOne`) | `[TARGET]` | Confirmed (References existing User) |
-| `User` | `mother` | `User` | No | Foreign Key `mother_id` (`ManyToOne`) | `[TARGET]` | Confirmed (References existing User) |
-| `User` | `isDeleted` | `Boolean` | Yes | Default: `false`. Soft-delete flag | `[TARGET]` | Confirmed (Soft delete) |
-| `User` | `children` | `List<User>` | No (Derived) | Read-only derived query (`father_id = :id OR mother_id = :id`) | `[TARGET]` | Confirmed |
-
-### 2.2 Entity: `Address`
-Represents a physical living location shared across cohabitants / family members.
-
-| Entity | Field | Type | Required | Constraints | Scope | Status / Assumption |
-|---|---|---|---|---|---|---|
-| `Address` | `id` | `Long` | No (Generated) | Auto-increment primary key | `[TARGET]` | Confirmed |
-| `Address` | `country` | `String` | Yes | `@NotBlank`, `@Size(max=100)` | `[TARGET]` | Confirmed |
-| `Address` | `city` | `String` | Yes | `@NotBlank`, `@Size(max=100)` | `[TARGET]` | Confirmed |
-| `Address` | `street` | `String` | Yes | `@NotBlank`, `@Size(max=150)` | `[TARGET]` | Confirmed |
-| `Address` | `building` | `String` | Yes | `@NotBlank`, `@Size(max=50)` | `[TARGET]` | Confirmed |
-| `Address` | `apartment` | `String` | No | `@Size(max=50)` | `[TARGET]` | Confirmed (Optional) |
-| `Address` | `postalCode` | `String` | No | `@Size(max=20)` | `[TARGET]` | Confirmed (Optional) |
+**Цель** — предоставить масштабируемый, высокопроизводительный внутренний/внешний инструмент с гарантированной уникальностью ключей в мультиинстансной среде и автоматическим управлением жизненным циклом ссылок (TTL).
 
 ---
 
-## 3. Business Rules & State Transitions (Scope: [TARGET])
+## 2. Целевая аудитория
 
-### 3.1 Domain Invariants & Business Rules
-- **Rule 1 (Email & Phone Uniqueness)**: 
-  - Before persistence, `email` is normalized to lowercase. Uniqueness is checked on the normalized value among active users. A duplicate returns `409 Conflict`.
-  - Before persistence, `phoneNumber` is normalized to E.164 (`+{countryCode}{subscriberNumber}`) without spaces, parentheses, or separators. Uniqueness is checked on the normalized value among active users. A duplicate returns `409 Conflict`.
-- **Rule 2 (Soft Delete Semantics)**: 
-  - Executing `DELETE /api/v1/users/{id}` sets `is_deleted = true`.
-  - All standard retrieval queries, including family endpoint results, filter out soft-deleted users (`WHERE is_deleted = false`). Soft-deleted users are never returned by the MVP API.
-  - Soft deletion never clears or rewrites existing `father_id` / `mother_id` references in other users. Family links are retained so relatives of a soft-deleted user remain discoverable through `GET /api/v1/users/{id}/family`.
-  - Response DTO relation IDs are optional numeric fields. If a referenced parent user is soft-deleted, the corresponding `fatherId` / `motherId` field is omitted from JSON rather than exposing the deleted user ID or returning a textual sentinel. Lists of children include active user IDs only.
-- **Rule 3 (Address Reusability & Individual Mutation)**:
-  - Before persistence and comparison, every textual address component is trimmed and each sequence of one or more whitespace characters is collapsed to one standard space.
-  - Address identity comparison is case-insensitive after whitespace normalization.
-  - When creating or updating a user with address fields, reuse an existing `Address` only when all address details are identical: country, city, street, building, apartment, and postal code.
-  - If any address detail differs, including `postalCode`, create a new `Address` record instead of modifying or reusing the existing record.
-  - When updating a user's address, the change is individual: the user is relinked to an existing matching address or a new `Address` is created, leaving other family members at their original address.
-- **Rule 4 (Parental References)**:
-  - `father_id` and `mother_id` must reference valid existing non-deleted users.
-  - A user cannot be their own parent (`father_id != id` and `mother_id != id`).
-  - The same user cannot be assigned simultaneously as both `father` and `mother`; such a request returns `400 Bad Request`.
-  - Parent assignments must not create direct or indirect ancestry cycles. Any request that would make a user their own ancestor or descendant returns `400 Bad Request`.
-- **Rule 5 (Direct Lookup Semantics)**:
-  - Lookup by email is an exact match after normalizing the request value to lowercase; fuzzy or multi-criteria search is not part of the MVP.
-  - Lookup by ID or normalized email returns only active users. Missing or soft-deleted targets return `404 Not Found`.
-  - Family retrieval resolves an existing user row by ID, including a soft-deleted target solely as the traversal anchor, but returns active family members only.
-- **Rule 6 (Response Serialization)**:
-  - Optional response fields with no value are omitted from JSON rather than serialized as `null`. This applies to `phoneNumber`, `address`, `fatherId`, `motherId`, and optional address fields.
-  - Collection fields such as active `childrenIds` are returned as arrays and use an empty array when there are no values.
-- **Rule 7 (PUT Replacement Semantics)**:
-  - `PUT` performs full-resource replacement rather than a partial merge.
-  - Required fields must be present and valid. Missing or explicit `null` optional fields reset their persisted values to SQL `NULL`.
-  - Replacing an address relinks the user to an identical normalized address or creates a new address record; existing address records are never mutated.
-
-### 3.2 REST API Surface (Scope: [TARGET])
-1. **Create User**:
-   - `POST /api/v1/users`: Create user with demographic data, optional address, optional parent IDs. Returns `201 Created`, `Location: /api/v1/users/{id}`, and the persisted user response DTO loaded from the database with its generated `id` and normalized values.
-2. **Get User by ID**:
-   - `GET /api/v1/users/{id}`: Returns user profile, address, parents, and direct children. Returns `200 OK` or `404 Not Found`.
-3. **Update User**:
-   - `PUT /api/v1/users/{id}`: Update individual user details (demographics, phone, individual address, parents). Returns `200 OK`.
-4. **Soft Delete User**:
-   - `DELETE /api/v1/users/{id}`: Marks user as `is_deleted = true`. Returns `204 No Content` with an empty response body.
-5. **Get User by Email**:
-   - `GET /api/v1/users/by-email?email={email}`: Normalizes the supplied email to lowercase and returns the matching active user. Returns `200 OK`; a missing or soft-deleted target returns `404 Not Found`.
-6. **Get Direct Family**:
-   - `GET /api/v1/users/{id}/family`: Returns a top-level JSON array of active user response DTOs (not a wrapper object): the specified user (when active), their active direct parents, and active direct children. Recursive ancestors/descendants are excluded.
-   - Array element order is not guaranteed.
-   - If the specified user is active and has no active relatives, returns `200 OK` with that user as the sole result.
-   - If the specified user is soft-deleted but has active direct relatives, returns those relatives without the deleted user.
-   - If the specified user is soft-deleted and has no active direct relatives, returns `200 OK` with an empty result set.
-   - If no user row has ever existed for the ID, returns `404 Not Found`.
-
-### 3.3 Database Seeding Specification (1,000 Users, 20 Locations)
-- **Dataset Scale**: Exactly 1,000 active users distributed across 20 distinct addresses (uneven distribution: 10 to 100+ cohabitants per location).
-- **Interconnected Family Graph Invariant**:
-  - In the seed dataset, parental relationships MUST be chronologically consistent: parents are strictly older than their children (`birthDate(parent) < birthDate(child)`).
-  - Multi-generational trees (grandparents -> parents -> children) living at shared addresses.
-- **Delivery Mechanism**:
-  - Flyway migrations execute automatically on startup. The Architect must define exact migration paths and contents in `SPEC.md` under `## Infrastructure & Environment Manifest`.
+- [x] Внутренние пользователи (сотрудники) и сервисы
+- [x] Внешние пользователи (клиенты)
+- [x] Другие сервисы (Machine-to-Machine, M2M)
 
 ---
 
-## 4. Out of Scope / Backlog
-Features identified during discovery that are strictly deferred from the current target iteration:
-- **[BACKLOG] Runtime Parental Age Validation on API Input**: Validating that parent is older than child during `POST/PUT /api/v1/users` is deferred (enforced only in initial seed dataset).
-- **[BACKLOG] Bulk Family Address Update**: Dedicated endpoint to atomically relocate an entire family group to a new address.
-- **[BACKLOG] Complex Genealogical Graph Queries**: Recursive multi-degree ancestor/descendant graph traversal endpoints.
-- **[BACKLOG] Hard Deletion & Cascade Purge**: Physical deletion of records and unlinking cascades from database.
-- **[BACKLOG] Authentication & Authorization**: Quarkus Security / OIDC, JWT, OAuth2 tokens.
-- **[BACKLOG] External Production Database Migration**: Migration from H2 to PostgreSQL/MySQL.
-- **[BACKLOG] Phone Extensions**: Parsing, normalization, persistence, and search for extension numbers (`ext`, `доб.`, etc.).
-- **[BACKLOG] Soft-Deleted User Operations**: Dedicated privileged methods for retrieval, search, inspection, and possible restoration of soft-deleted users.
-- **[BACKLOG] Dynamic Multi-Criteria Search**: Fuzzy filtering by name, email, phone, and address fields; pagination, sorting, and selectable `AND` / `OR` predicate composition.
-- **[BACKLOG] Flexible Address Component Ordering**: Parsing and equivalence matching for free-form addresses whose components are supplied in different orders.
+## 3. Функциональные требования
+
+### 3.1 Обязательные (MVP) — `Scope: [TARGET]`
+
+#### 3.1.1 Создание короткой ссылки (`POST /api/v1/links`)
+
+- Сервис принимает оригинальный URL.
+- Детерминированная генерация **8-символьного ключа** с использованием готовой библиотеки (Hashids / Sqids), преобразующей уникальный идентификатор из БД в строку.
+- Возвращает итоговый URL в формате `shortner.url/{shortkey}`.
+
+**Идемпотентность создания (окно 30 минут):**
+- При попытке сократить тот же URL в течение 30 минут с момента первого запроса — сервис возвращает существующий шортлинк и обновляет TTL записи в БД.
+- По истечении 30 минут для того же URL генерируется новая короткая ссылка.
+
+#### 3.1.2 Перенаправление (`GET /{shortkey}`)
+
+- HTTP-запрос по короткому коду выполняет `302 Found` (или `301 Moved Permanently` в зависимости от SEO-требований) редирект на оригинальный URL.
+
+#### 3.1.3 Фоновая очистка (TTL Job)
+
+- Ежедневно в **00:00** запускается фоновая задача по удалению записей с истёкшим TTL.
+- **Изоляция**: запуск строго в 1 инстансе. Синхронизация обеспечивается через монитор в БД (advisory locks или таблица блокировок с правильной изоляцией транзакции).
+
+### 3.2 Бэклог (Вне scope MVP) — `Scope: [BACKLOG]`
+
+1. Механизм повторного использования (переиспользования) освободившихся ключей.
+2. Пользовательские алиасы.
+3. Аналитика, дашборды, авторизация.
 
 ---
 
-## 5. DEFINITION OF DONE
-The Planner's discovery phase is complete ONLY when:
-1. **PRD Persisted**: All requirements are documented in `docs/PRD.md`.
-2. **Tech Stack Discovered**: Section 1.1 identifies the runtime, build tool, framework, persistence, protocol, and deployment constraints.
-3. **Strict Scope Partitioning**: All requirements are partitioned into `Scope: [TARGET]` or `Scope: [BACKLOG]`.
-4. **Zero Ambiguity in Target**: `Scope: [TARGET]` contains zero unclarified business logic, zero mocked domain rules, and zero blind spots.
+## 4. Нефункциональные требования и инварианты
+
+| Характеристика     | Требование                                                                          |
+|--------------------|-------------------------------------------------------------------------------------|
+| Время отклика      | < 100 мс для GET-редиректа (p95)                                                    |
+| Масштабируемость   | Горизонтальное масштабирование (Stateless-инстансы + Redis + PostgreSQL)            |
+| Генерация ключей   | Резервирование уникальных ID пачками по **1000 штук** через БД (Sequence/Index)     |
+| Хранилище (БД)     | PostgreSQL. Основная таблица: `id` (PK), `shortlink`, `fulllink`, `ttl`             |
+| Кеширование        | Redis                                                                               |
+
+### 4.1 Политики кеширования (Redis)
+
+**Связка `short → long` (для GET-редиректа):**
+- При добавлении новой ссылки: TTL в кеше = **1 час**.
+- При промахе кеша (чтение из БД): TTL в кеше = **5 минут**.
+- При каждом успешном чтении из кеша: TTL сбрасывается/продлевается на **5 минут**.
+
+**Связка `long → short` (для идемпотентного POST):**
+- Кешируется на **30 минут** при создании новой ссылки.
+
+### 4.2 Конфигурационные инварианты (вынести в `application.yml` / ENV)
+
+| Параметр                            | Значение    |
+|-------------------------------------|-------------|
+| Sequence allocation size            | 1000        |
+| TTL ссылки в БД по умолчанию        | 24 часа     |
+| TTL кеша `short→long` при создании  | 1 час       |
+| TTL кеша `short→long` при чтении    | 5 минут     |
+| TTL кеша `long→short`               | 30 минут    |
+
+---
+
+## 5. Технический стек — `§1.1`
+
+- **Язык**: Java 21
+- **Фреймворк**: Quarkus
+- **База данных**: PostgreSQL
+- **Кеш / In-memory**: Redis
+- **Сборка**: Gradle
+- **Контейнеризация**: Docker + Docker Compose
+- **Логирование и Наблюдаемость**: Структурированные JSON-логи в stdout (простейшая интеграция для ELK-стека, без тяжеловесных APM-агентов).
+
+---
+
+## 6. Интеграции и зависимости
+
+Standalone MVP. Взаимодействие только с инфраструктурными компонентами:
+- PostgreSQL
+- Redis
+
+---
+
+## 7. Ограничения и допущения
+
+- Аутентификация пользователей вне scope MVP. `Scope: [BACKLOG]`
+- Аналитика и дашборды вне scope MVP. `Scope: [BACKLOG]`
+- Переиспользование освободившихся ключей вне scope MVP. `Scope: [BACKLOG]`
+
+---
+
+## 8. Критерии приёмки
+
+1. Все unit-тесты (в т.ч. на логику кеширования и детерминированную генерацию ключей) успешно проходят.
+2. Все integration-тесты (PostgreSQL и Redis поднимаются через Testcontainers) зелёные.
+3. Фоновый джоб корректно блокируется транзакцией БД при одновременном старте на нескольких нодах.
+4. Сервис корректно отдаёт JSON-логи в консоль.
+5. REST API соответствует спецификации OpenAPI.
+6. Сервис запускается командами из `docs/PROJECT_ENV.md`.
