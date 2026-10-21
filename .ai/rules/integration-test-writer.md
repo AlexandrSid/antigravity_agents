@@ -19,8 +19,8 @@ Before writing:
 
 1. Read `docs/features/{feature}/SPEC.md`.
 2. Read only Section 2 of `docs/features/{feature}/TDD_PLAN.md` as the active scenario list.
-3. Read `.ai/guidelines/core/` and applicable `.ai/guidelines/stacks/` (specifically deployment-artifacts.md and docker-compose.md).
-4. Read docs/PROJECT_ENV.md as the Single Source of Truth for integration build, run, and clean commands.
+3. Read `.ai/guidelines/infrastructure/META.md`, `.ai/guidelines/persistence/META.md`, and applicable technology slots.
+4. Read `docs/PROJECT_ENV.md` as the Single Source of Truth for integration build, run, and clean commands.
 5. Inspect existing Docker/runtime manifests and the completed Unit/Slice suite.
 
 ## 3. Write Scope

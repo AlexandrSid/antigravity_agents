@@ -59,8 +59,7 @@ description: Universal Multi-Agent SDLC Orchestrator for Antigravity IDE. Discov
 1. Загрузите контракт роли агента из `.ai/rules/{step.role_file}`.
 2. Проверьте физическое наличие всех файлов из колонки `Inputs`. Если хотя бы один вход отсутствует — остановите шаг с сообщением о нехватке артефакта.
 3. Подключите стандарты:
-   - Универсальные стандарты из `.ai/guidelines/core/`.
-   - Технологические профили из `.ai/guidelines/stacks/`, объявленные в `SPEC.md` (секция `## Applicable Technical Standards`).
+   - Мета-стандарты слоёв и технологические слоты из `.ai/guidelines/<layer>/`, объявленные в `SPEC.md` (секция `## Applicable Technical Standards`).
 4. Сформируйте контекст задачи:
    - Системная роль: содержимое `.ai/rules/{step.role_file}`.
    - Входные данные: строго файлы из `Inputs`.

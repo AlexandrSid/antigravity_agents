@@ -14,5 +14,21 @@
     },
     "cost_usd": 0.09825,
     "exit_status": "SUCCESS"
+  },
+  {
+    "step_id": "02",
+    "agent_role": "TDD Planner",
+    "model_used": "gemini-3.8-flash-high",
+    "provider": "google",
+    "timestamp_start": "2026-10-20T13:16:17Z",
+    "timestamp_end": "2026-10-20T13:55:00Z",
+    "duration_sec": 140.0,
+    "tokens": {
+      "prompt_tokens": 6800,
+      "completion_tokens": 5200,
+      "total_tokens": 12000
+    },
+    "cost_usd": 0.00207,
+    "exit_status": "SUCCESS"
   }
 ]

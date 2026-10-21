@@ -11,13 +11,12 @@
 
 ## Applicable Technical Standards
 
-- `.ai/guidelines/core/architecture-standards.md`
-- `.ai/guidelines/core/database-migrations.md`
-- `.ai/guidelines/core/deployment-artifacts.md`
-- `.ai/guidelines/stacks/frameworks/quarkus.md`
-- `.ai/guidelines/stacks/languages/java.md`
-- `.ai/guidelines/stacks/databases/postgresql.md`
-- `.ai/guidelines/stacks/infrastructure/docker-compose.md`
+- Architecture: `.ai/guidelines/architecture/META.md` (Slot: `.ai/guidelines/architecture/slots/quarkus.md`)
+- Language: `.ai/guidelines/languages/META.md` (Slot: `.ai/guidelines/languages/slots/java.md`)
+- Testing: `.ai/guidelines/testing/META.md` (Slot: `.ai/guidelines/testing/slots/java.md`)
+- Persistence: `.ai/guidelines/persistence/META.md` (Slot: `.ai/guidelines/persistence/slots/postgresql.md`)
+- Infrastructure: `.ai/guidelines/infrastructure/META.md` (Slot: `.ai/guidelines/infrastructure/slots/docker-compose.md`)
+- Environment: `.ai/guidelines/environment/META.md` (Slot: `.ai/guidelines/environment/slots/local-dev.md`)
 
 ---
 
@@ -180,7 +179,7 @@ testImplementation("org.testcontainers:junit-jupiter")
 // Redis testcontainers (via generic container)
 ```
 
-- **Quarkus package type**: `fast-jar` (обязательно: `.ai/guidelines/stacks/frameworks/quarkus.md`)
+- **Quarkus package type**: `fast-jar` (обязательно: `.ai/guidelines/architecture/slots/quarkus.md`)
 - **Logging format**: JSON structured logging через `quarkus-logging-json` extension
 
 ---

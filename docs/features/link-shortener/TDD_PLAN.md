@@ -3,7 +3,7 @@
 ## Overview
 - **Feature Identifier**: `link-shortener`
 - **Source Contract**: `docs/features/link-shortener/SPEC.md`
-- **Engineering Standards**: `.ai/guidelines/core/architecture-standards.md`, `.ai/guidelines/stacks/frameworks/quarkus.md`, `.ai/guidelines/stacks/languages/java.md`
+- **Engineering Standards**: `.ai/guidelines/architecture/META.md`, `.ai/guidelines/testing/META.md`, `.ai/guidelines/languages/META.md`
 - **Author**: `tdd-planner` (sole creator; owns all task and test definitions)
 - **Consumers**: `environment-bootstrap` (Step 03) · `skeleton-writer` (Step 04) · `test-writer` (Step 05) · `code-writer` (Step 06)
 
@@ -14,7 +14,7 @@ Checklist of all DTOs, interfaces, entities, stubs, and components that `skeleto
 
 - [ ] Implement: Inbound DTO `CreateLinkRequest` (Java 21 record) with `@NotBlank`, `@Size(max = 2048)`, `@Pattern` URL validation constraints per SPEC §2.1
 - [ ] Implement: Outbound DTO `LinkResponse` (Java 21 record) with `shortUrl`, `shortKey`, `originalUrl`, `createdAt`, `expiresAt` per SPEC §2.1
-- [ ] Implement: Outbound DTO `ProblemDetailResponse` (Java 21 record) matching RFC 7807 (`type`, `title`, `status`, `detail`, `instance`, `invalidParams`) per `.ai/guidelines/core/architecture-standards.md`
+- [ ] Implement: Outbound DTO `ProblemDetailResponse` (Java 21 record) matching RFC 7807 (`type`, `title`, `status`, `detail`, `instance`, `invalidParams`) per `.ai/guidelines/architecture/META.md`
 - [ ] Implement: Domain Entity `ShortLink` (Quarkus PanacheEntityBase) with `id` (PK via `short_links_seq`), `shortKey`, `originalUrl`, `createdAt`, `expiresAt`
 - [ ] Implement: Repository interface/class `ShortLinkRepository` implementing `PanacheRepository<ShortLink>` with method signatures:
   - `Optional<ShortLink> findByShortKey(String shortKey)`
