@@ -1,6 +1,7 @@
 package com.linkshortener.resource;
 
 import com.linkshortener.service.LinkService;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 import java.net.URI;
 
 @Path("/")
+@ApplicationScoped
 public class RedirectResource {
 
     @Inject
