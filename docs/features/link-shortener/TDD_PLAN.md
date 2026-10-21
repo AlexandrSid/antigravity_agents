@@ -48,11 +48,11 @@ Sequential, atomic development steps. All tasks in Section 1 require **exclusive
 - **Target Signature**: `ShortKeyGenerator#generateKey(long id): String` и `ShortKeyGenerator#decodeKey(String shortKey): OptionalLong`
 - **Assumptions**: `[AI-ASSUMPTION: Sqids сконфигурирован с minLength=8 и стандартным алфавитом base62 | Attention Needed for Implementer: проверить алфавит без спецсимволов]`.
 - **Red Phase (Unit Tests)**:
-  - [ ] Test: `testGenerateKey_producesExact8Chars` — проверяет, что для любого ID >= 1 генерируется строка ровно из 8 буквенно-цифровых символов.
-  - [ ] Test: `testGenerateKey_isDeterministic` — повторный вызов с одним и тем же ID возвращает идентичный `shortKey`.
-  - [ ] Test: `testGenerateKey_differentIdsProduceDifferentKeys` — вызов для ID=1 и ID=2 возвращает уникальные разные ключи.
-  - [ ] Test: `testDecodeKey_recoversOriginalId` — декодирование сгенерированного ключа восстанавливает исходный `id`.
-  - [ ] Test: `testDecodeKey_invalidKeyReturnsEmpty` — некорректная строка или строка неверной длины возвращает `OptionalLong.empty()`.
+  - [x] Test: `testGenerateKey_producesExact8Chars` — проверяет, что для любого ID >= 1 генерируется строка ровно из 8 буквенно-цифровых символов.
+  - [x] Test: `testGenerateKey_isDeterministic` — повторный вызов с одним и тем же ID возвращает идентичный `shortKey`.
+  - [x] Test: `testGenerateKey_differentIdsProduceDifferentKeys` — вызов для ID=1 и ID=2 возвращает уникальные разные ключи.
+  - [x] Test: `testDecodeKey_recoversOriginalId` — декодирование сгенерированного ключа восстанавливает исходный `id`.
+  - [x] Test: `testDecodeKey_invalidKeyReturnsEmpty` — некорректная строка или строка неверной длины возвращает `OptionalLong.empty()`.
 - **Green Phase Guidance**: Обернуть `org.sqids.Sqids` с конфигурацией `minLength(8)`. Методы должны быть thread-safe и stateless.
 
 ---
@@ -64,12 +64,12 @@ Sequential, atomic development steps. All tasks in Section 1 require **exclusive
   - `CacheKeyUtil#longUrlToShortKey(String longUrl): String` (с SHA-256 хешированием)
   - `RedisLinkCache#getLongUrl / putShortToLong / refreshShortToLongTtl`
 - **Red Phase (Unit Tests)**:
-  - [ ] Test: `testCacheKeyUtil_hashesLongUrlConsistently` — один и тот же URL дает идентичный детерминированный Redis-ключ с SHA-256 префиксом.
-  - [ ] Test: `testGetLongUrl_cacheHit_returnsUrl` — при наличии ключа в Redis возвращается оригинальный URL.
-  - [ ] Test: `testGetLongUrl_cacheMiss_returnsEmpty` — при отсутствии ключа возвращается `Optional.empty()`.
-  - [ ] Test: `testPutShortToLong_setsKeyWithConfiguredTtl` — метод вызывает `setex` с заданным TTL (1 час при создании, 5 минут при чтении).
-  - [ ] Test: `testRefreshShortToLongTtl_extendsTtl` — вызывает команду `expire` на 300 секунд (5 минут).
-  - [ ] Test: `testPutLongToShort_sets30MinuteTtl` — связка long->short кешируется строго на 1800 секунд (30 минут).
+  - [x] Test: `testCacheKeyUtil_hashesLongUrlConsistently` — один и тот же URL дает идентичный детерминированный Redis-ключ с SHA-256 префиксом.
+  - [x] Test: `testGetLongUrl_cacheHit_returnsUrl` — при наличии ключа в Redis возвращается оригинальный URL.
+  - [x] Test: `testGetLongUrl_cacheMiss_returnsEmpty` — при отсутствии ключа возвращается `Optional.empty()`.
+  - [x] Test: `testPutShortToLong_setsKeyWithConfiguredTtl` — метод вызывает `setex` с заданным TTL (1 час при создании, 5 минут при чтении).
+  - [x] Test: `testRefreshShortToLongTtl_extendsTtl` — вызывает команду `expire` на 300 секунд (5 минут).
+  - [x] Test: `testPutLongToShort_sets30MinuteTtl` — связка long->short кешируется строго на 1800 секунд (30 минут).
   - [ ] Mock Behavior Guidance: Использовать мок `io.quarkus.redis.datasource.RedisDataSource` / `ValueCommands` без поднятия реального Redis.
 - **Green Phase Guidance**: Реализовать `RedisLinkCache` поверх Quarkus Redis DataSource API с передачей параметров TTL из `application.properties`.
 
@@ -79,10 +79,10 @@ Sequential, atomic development steps. All tasks in Section 1 require **exclusive
 - **Step Goal**: Бизнес-логика создания короткой ссылки с соблюдением 30-минутного окна идемпотентности, генерацией ID пачками и сохранением в БД и кеш.
 - **Target Signature**: `LinkService#createShortLink(CreateLinkRequest request): LinkResponse`
 - **Red Phase (Unit Tests)**:
-  - [ ] Test: `testCreateShortLink_newUrl_reservesIdAndPersists` — если URL отсутствует в Redis `long->short`: резервирует ID, генерирует 8-значный ключ, сохраняет в репозиторий, прогревает оба кеша (short->long на 1ч, long->short на 30м), возвращает `201 Created` DTO.
-  - [ ] Test: `testCreateShortLink_idempotentHit_returnsExistingAndExtendsTtl` — если URL найден в кеше `long->short` в пределах 30-минутного окна: НЕ генерирует новый ключ, находит существующую запись в БД, обновляет `expiresAt = NOW() + 24h`, возвращает DTO существующей ссылки.
-  - [ ] Test: `testCreateShortLink_expiredIdempotency_generatesNewLink` — если 30 минут истекли (в кеше промах): генерирует новую отдельную ссылку даже для ранее встречавшегося URL.
-  - [ ] Test: `testCreateShortLink_invalidUrlThrowsValidationException` — передача синтаксически невалидного URL выбрасывает доменное исключение валидации.
+  - [x] Test: `testCreateShortLink_newUrl_reservesIdAndPersists` — если URL отсутствует в Redis `long->short`: резервирует ID, генерирует 8-значный ключ, сохраняет в репозиторий, прогревает оба кеша (short->long на 1ч, long->short на 30м), возвращает `201 Created` DTO.
+  - [x] Test: `testCreateShortLink_idempotentHit_returnsExistingAndExtendsTtl` — если URL найден в кеше `long->short` в пределах 30-минутного окна: НЕ генерирует новый ключ, находит существующую запись в БД, обновляет `expiresAt = NOW() + 24h`, возвращает DTO существующей ссылки.
+  - [x] Test: `testCreateShortLink_expiredIdempotency_generatesNewLink` — если 30 минут истекли (в кеше промах): генерирует новую отдельную ссылку даже для ранее встречавшегося URL.
+  - [x] Test: `testCreateShortLink_invalidUrlThrowsValidationException` — передача синтаксически невалидного URL выбрасывает доменное исключение валидации.
   - [ ] Mock Behavior Guidance: Замокать `ShortLinkRepository`, `RedisLinkCache`, `ShortKeyGenerator` с детерминированными ответами.
 - **Green Phase Guidance**: Реализовать `LinkServiceImpl#createShortLink` с проверкой кэша идемпотентности перед обращением к Sequence БД.
 
@@ -92,10 +92,10 @@ Sequential, atomic development steps. All tasks in Section 1 require **exclusive
 - **Step Goal**: Быстрое разрешение короткого ключа с Cache-Aside стратегией и автоматическим продлением TTL в кеше при каждом чтении.
 - **Target Signature**: `LinkService#resolveOriginalUrl(String shortKey): String`
 - **Red Phase (Unit Tests)**:
-  - [ ] Test: `testResolve_cacheHit_refreshesTtlAndReturnsUrl` — при попадании в Redis: вызывает `refreshShortToLongTtl` (+5 минут) и немедленно возвращает `originalUrl` без обращения к БД.
-  - [ ] Test: `testResolve_cacheMiss_readsDbAndPopulatesCacheWith5MinTtl` — при промахе в Redis: читает из `ShortLinkRepository`, если найдена и `expiresAt > NOW()` — сохраняет в Redis с TTL 5 минут и возвращает URL.
-  - [ ] Test: `testResolve_linkExpiredInDb_throwsNotFoundException` — если запись найдена в БД, но `expiresAt <= NOW()` — возвращает ошибку 404 / выбрасывает `LinkNotFoundException`.
-  - [ ] Test: `testResolve_linkNotFoundInDb_throwsNotFoundException` — если запись отсутствует в БД — выбрасывает `LinkNotFoundException`.
+  - [x] Test: `testResolve_cacheHit_refreshesTtlAndReturnsUrl` — при попадании в Redis: вызывает `refreshShortToLongTtl` (+5 минут) и немедленно возвращает `originalUrl` без обращения к БД.
+  - [x] Test: `testResolve_cacheMiss_readsDbAndPopulatesCacheWith5MinTtl` — при промахе в Redis: читает из `ShortLinkRepository`, если найдена и `expiresAt > NOW()` — сохраняет в Redis с TTL 5 минут и возвращает URL.
+  - [x] Test: `testResolve_linkExpiredInDb_throwsNotFoundException` — если запись найдена в БД, но `expiresAt <= NOW()` — возвращает ошибку 404 / выбрасывает `LinkNotFoundException`.
+  - [x] Test: `testResolve_linkNotFoundInDb_throwsNotFoundException` — если запись отсутствует в БД — выбрасывает `LinkNotFoundException`.
   - [ ] Mock Behavior Guidance: Замокать `RedisLinkCache` и `ShortLinkRepository`.
 - **Green Phase Guidance**: Реализовать `LinkServiceImpl#resolveOriginalUrl` со строгой проверкой времени истечения ссылки (`expiresAt`).
 
@@ -105,8 +105,8 @@ Sequential, atomic development steps. All tasks in Section 1 require **exclusive
 - **Step Goal**: Фоновая очистка просроченных записей с изоляцией транзакционным замком PostgreSQL advisory lock.
 - **Target Signature**: `TtlCleanupJob#purgeExpiredLinks(): int`
 - **Red Phase (Unit Tests)**:
-  - [ ] Test: `testPurgeExpiredLinks_acquiresLockAndDeletesExpired` — при успешном получении advisory lock вызывает `repository.deleteExpired(Instant.now())` и возвращает число удаленных записей.
-  - [ ] Test: `testPurgeExpiredLinks_lockNotAcquired_skipsExecution` — если advisory lock уже занят другим инстансом (`pg_try_advisory_xact_lock` вернул `false`), метод пропускает удаление и корректно логирует пропуск без выброса ошибки.
+  - [x] Test: `testPurgeExpiredLinks_acquiresLockAndDeletesExpired` — при успешном получении advisory lock вызывает `repository.deleteExpired(Instant.now())` и возвращает число удаленных записей.
+  - [x] Test: `testPurgeExpiredLinks_lockNotAcquired_skipsExecution` — если advisory lock уже занят другим инстансом (`pg_try_advisory_xact_lock` вернул `false`), метод пропускает удаление и корректно логирует пропуск без выброса ошибки.
   - [ ] Mock Behavior Guidance: Замокать `EntityManager` / нативный SQL-запрос advisory lock.
 - **Green Phase Guidance**: Оформить метод `@Scheduled(cron = "{app.cleanup.cron}")` с аннотацией `@Transactional` и вызовом нативного запроса блокировки.
 
@@ -118,11 +118,11 @@ Sequential, atomic development steps. All tasks in Section 1 require **exclusive
   - `POST /api/v1/links`
   - `GET /{shortKey}`
 - **Red Phase (Slice Tests with RestAssured / QuarkusTest)**:
-  - [ ] Test: `testPostLink_validUrl_returns201WithShortUrl` — валидный POST возвращает HTTP 201 Created и JSON с полями `shortUrl`, `shortKey`, `originalUrl`.
-  - [ ] Test: `testPostLink_blankUrl_returns400ProblemDetails` — пустой URL возвращает HTTP 400 и RFC 7807 JSON с массивом `invalidParams`.
-  - [ ] Test: `testPostLink_urlExceeding2048Chars_returns400ProblemDetails` — URL длиннее 2048 символов возвращает HTTP 400.
-  - [ ] Test: `testGetShortKey_existingActive_returns302WithLocationHeader` — GET запрос возвращает HTTP 302 Found с заголовком `Location: {originalUrl}`.
-  - [ ] Test: `testGetShortKey_nonExistingOrExpired_returns404ProblemDetails` — неизвестный или просроченный ключ возвращает HTTP 404 и `application/problem+json`.
+  - [x] Test: `testPostLink_validUrl_returns201WithShortUrl` — валидный POST возвращает HTTP 201 Created и JSON с полями `shortUrl`, `shortKey`, `originalUrl`.
+  - [x] Test: `testPostLink_blankUrl_returns400ProblemDetails` — пустой URL возвращает HTTP 400 и RFC 7807 JSON с массивом `invalidParams`.
+  - [x] Test: `testPostLink_urlExceeding2048Chars_returns400ProblemDetails` — URL длиннее 2048 символов возвращает HTTP 400.
+  - [x] Test: `testGetShortKey_existingActive_returns302WithLocationHeader` — GET запрос возвращает HTTP 302 Found с заголовком `Location: {originalUrl}`.
+  - [x] Test: `testGetShortKey_nonExistingOrExpired_returns404ProblemDetails` — неизвестный или просроченный ключ возвращает HTTP 404 и `application/problem+json`.
   - [ ] Mock Behavior Guidance: Использовать `@InjectMock LinkService` для изоляции контроллеров от бизнес-слоя.
 - **Green Phase Guidance**: Реализовать JAX-RS / Quarkus REST ресурсы и ExceptionMappers для формирования RFC 7807 Problem Details.
 
