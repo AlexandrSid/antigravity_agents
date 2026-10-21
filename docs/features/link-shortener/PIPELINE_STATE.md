@@ -3,10 +3,10 @@
 > **Pipeline SSOT**: `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`
 > **Feature Branch**: `agent-feature-link-shortener`
 > **Overall Status**: `IN_PROGRESS`
-> **Current Step**: `08`
+> **Current Step**: `09`
 > **Active Environment**: `antigravity`
 > **Created At**: `2026-10-20T13:38:00+02:00`
-> **Last Updated**: `2026-10-21T20:31:00+02:00`
+> **Last Updated**: `2026-10-21T21:12:00+02:00`
 
 ---
 
@@ -26,8 +26,8 @@
 | [x] **05** | **Test Writer** | `COMPLETED` | `UNIT_RED_PHASE` | `2269207` | `antigravity` | `2026-10-21T19:37:00+02:00` |
 | [x] **06** | **Code Writer** | `COMPLETED` | `UNIT_GREEN_PHASE` | `4275cc9` | `antigravity` | `2026-10-21T19:57:00+02:00` |
 | [x] **07** | **Integration Test Writer** | `COMPLETED` | `NONE` | `2e685fe` | `antigravity` | `2026-10-21T20:31:00+02:00` |
-| [ ] **08** | **Integration Code Writer** | `PENDING` | `INTEGRATION_GREEN_PHASE` | — | — | — |
-| [ ] **09** | **Documenter** | `PENDING` | `NONE` | — | — | — |
+| [x] **08** | **Integration Code Writer** | `COMPLETED` | `INTEGRATION_GREEN_PHASE` | `39b69c4` | `antigravity` | `2026-10-21T21:11:25+02:00` |
+| [>] **09** | **Documenter** | `IN_PROGRESS` | `NONE` | — | `antigravity` | — |
 
 ---
 
@@ -49,7 +49,7 @@
 - **Step 07 (Integration Test Writer)**:
   - [x] Integration tests in `src/test/java/com/linkshortener/integration/` & `docs/features/link-shortener/INTEGRATION_REPORT.md`
 - **Step 08 (Integration Code Writer)**:
-  - [ ] Integration fixes & Green E2E phase validated
+  - [x] Integration fixes & Green E2E phase validated
 - **Step 09 (Documenter)**:
   - [ ] `docs/features/link-shortener/SUMMARY.md`
 
@@ -70,3 +70,5 @@
 | 2026-10-21T19:37:00+02:00 | 05 | COMPLETED | antigravity | Unit & Slice tests (27 scenarios) verified by UNIT_RED_PHASE gate (clean failure on stubs) |
 | 2026-10-21T19:57:00+02:00 | 06 | COMPLETED | antigravity | SHA: 4275cc9 — Production code green implementation and stub eradication verified by UNIT_GREEN_PHASE |
 | 2026-10-21T20:31:00+02:00 | 07 | COMPLETED | antigravity | SHA: 2e685fe — Integration test suite (Testcontainers + Docker Compose E2E) and INTEGRATION_REPORT.md finalized |
+| 2026-10-21T21:11:25+02:00 | 08 | COMPLETED | antigravity | SHA: 39b69c4 — Integration fixes (ShortLink assigned ID, Dockerfile CRLF, Compose cleanup) & INTEGRATION_GREEN_PHASE passed |
+| 2026-10-21T21:12:00+02:00 | 09 | IN_PROGRESS | antigravity | Documenter agent started |
