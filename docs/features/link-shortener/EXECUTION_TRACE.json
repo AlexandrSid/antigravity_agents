@@ -94,5 +94,21 @@
     },
     "cost_usd": 0.0039,
     "exit_status": "SUCCESS"
+  },
+  {
+    "step_id": "07",
+    "agent_role": "Integration Test Writer",
+    "model_used": "gemini-3.8-flash-high",
+    "provider": "google",
+    "timestamp_start": "2026-10-21T20:25:31Z",
+    "timestamp_end": "2026-10-21T20:31:00Z",
+    "duration_sec": 329.0,
+    "tokens": {
+      "prompt_tokens": 11000,
+      "completion_tokens": 6500,
+      "total_tokens": 17500
+    },
+    "cost_usd": 0.0031,
+    "exit_status": "SUCCESS"
   }
 ]
