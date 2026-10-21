@@ -10,10 +10,10 @@ import java.util.Optional;
 public class ShortLinkRepository implements PanacheRepository<ShortLink> {
 
     public Optional<ShortLink> findByShortKey(String shortKey) {
-        throw new UnsupportedOperationException("Not implemented: ShortLinkRepository.findByShortKey");
+        return find("shortKey", shortKey).firstResultOptional();
     }
 
     public int deleteExpired(Instant now) {
-        throw new UnsupportedOperationException("Not implemented: ShortLinkRepository.deleteExpired");
+        return (int) delete("expiresAt < ?1", now);
     }
 }
