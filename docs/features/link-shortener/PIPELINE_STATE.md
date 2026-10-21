@@ -2,11 +2,11 @@
 
 > **Pipeline SSOT**: `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`
 > **Feature Branch**: `agent-feature-link-shortener`
-> **Overall Status**: `IN_PROGRESS`
-> **Current Step**: `09`
+> **Overall Status**: `COMPLETED`
+> **Current Step**: `—`
 > **Active Environment**: `antigravity`
 > **Created At**: `2026-10-20T13:38:00+02:00`
-> **Last Updated**: `2026-10-21T21:12:00+02:00`
+> **Last Updated**: `2026-10-21T21:17:00+02:00`
 
 ---
 
@@ -27,7 +27,7 @@
 | [x] **06** | **Code Writer** | `COMPLETED` | `UNIT_GREEN_PHASE` | `4275cc9` | `antigravity` | `2026-10-21T19:57:00+02:00` |
 | [x] **07** | **Integration Test Writer** | `COMPLETED` | `NONE` | `2e685fe` | `antigravity` | `2026-10-21T20:31:00+02:00` |
 | [x] **08** | **Integration Code Writer** | `COMPLETED` | `INTEGRATION_GREEN_PHASE` | `39b69c4` | `antigravity` | `2026-10-21T21:11:25+02:00` |
-| [>] **09** | **Documenter** | `IN_PROGRESS` | `NONE` | — | `antigravity` | — |
+| [x] **09** | **Documenter** | `COMPLETED` | `NONE` | `d108da9` | `antigravity` | `2026-10-21T21:16:40+02:00` |
 
 ---
 
@@ -51,7 +51,7 @@
 - **Step 08 (Integration Code Writer)**:
   - [x] Integration fixes & Green E2E phase validated
 - **Step 09 (Documenter)**:
-  - [ ] `docs/features/link-shortener/SUMMARY.md`
+  - [x] `docs/features/link-shortener/SUMMARY.md`
 
 ---
 
@@ -72,3 +72,4 @@
 | 2026-10-21T20:31:00+02:00 | 07 | COMPLETED | antigravity | SHA: 2e685fe — Integration test suite (Testcontainers + Docker Compose E2E) and INTEGRATION_REPORT.md finalized |
 | 2026-10-21T21:11:25+02:00 | 08 | COMPLETED | antigravity | SHA: 39b69c4 — Integration fixes (ShortLink assigned ID, Dockerfile CRLF, Compose cleanup) & INTEGRATION_GREEN_PHASE passed |
 | 2026-10-21T21:12:00+02:00 | 09 | IN_PROGRESS | antigravity | Documenter agent started |
+| 2026-10-21T21:16:40+02:00 | 09 | COMPLETED | antigravity | SHA: d108da9 — SUMMARY.md finalized; Greenfield pipeline complete |
