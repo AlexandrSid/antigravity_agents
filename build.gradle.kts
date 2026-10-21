@@ -56,6 +56,11 @@ tasks.withType<Test> {
     systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
 }
 
+tasks.named<Test>("test") {
+    exclude("**/*IntegrationTest.class", "**/*IT.class")
+}
+
+
 // Dedicated integrationTest task to support PROJECT_ENV.md command
 val integrationTest = tasks.register<Test>("integrationTest") {
     description = "Runs integration tests with Testcontainers and external containers."
