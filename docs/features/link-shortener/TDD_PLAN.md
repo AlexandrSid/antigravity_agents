@@ -131,9 +131,10 @@ Sequential, atomic development steps. All tasks in Section 1 require **exclusive
 ## 2. Deferred Integration & E2E Backlog
 Checklist сценариев, требующих реальной инфраструктуры (PostgreSQL, Redis, Testcontainers, Docker Compose). Эти тесты реализуются на шагах 07 и 08 (`integration-test-writer` и `integration-code-writer`) и строго изолированы от Unit TDD цикла.
 
-- [ ] Integration: Проверка реальной генерации ID из PostgreSQL Sequence `short_links_seq` с шагом выделения `allocationSize = 1000` под параллельной нагрузкой.
-- [ ] Integration: Сквозная проверка миграции Flyway `V1__init_schema.sql` на чистой базе PostgreSQL 16 в Testcontainers.
-- [ ] Integration: Проверка реального Redis 7 в Testcontainers: запись ключей, чтение, проверка истечения TTL и продления TTL.
-- [ ] Integration: Конкурентный запуск `TtlCleanupJob` на 2 параллельных потоках/инстансах с проверкой, что `pg_try_advisory_xact_lock` предотвращает двойное удаление.
-- [ ] Integration: Проверка структурированного JSON-логирования в stdout (соответствие требованиям ELK).
-- [ ] E2E: Сквозной сценарий через Docker Compose: запуск полного стека (app + postgres + redis) -> `POST /api/v1/links` -> `GET /{shortKey}` с проверкой заголовка `Location` и HTTP 302.
+- [x] Integration: Проверка реальной генерации ID из PostgreSQL Sequence `short_links_seq` с шагом выделения `allocationSize = 1000` под параллельной нагрузкой.
+- [x] Integration: Сквозная проверка миграции Flyway `V1__init_schema.sql` на чистой базе PostgreSQL 16 в Testcontainers.
+- [x] Integration: Проверка реального Redis 7 в Testcontainers: запись ключей, чтение, проверка истечения TTL и продления TTL.
+- [x] Integration: Конкурентный запуск `TtlCleanupJob` на 2 параллельных потоках/инстансах с проверкой, что `pg_try_advisory_xact_lock` предотвращает двойное удаление.
+- [x] Integration: Проверка структурированного JSON-логирования в stdout (соответствие требованиям ELK).
+- [x] E2E: Сквозной сценарий через Docker Compose: запуск полного стека (app + postgres + redis) -> `POST /api/v1/links` -> `GET /{shortKey}` с проверкой заголовка `Location` и HTTP 302.
+

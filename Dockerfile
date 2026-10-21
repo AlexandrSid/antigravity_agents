@@ -3,7 +3,7 @@ FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /build
 COPY gradlew gradlew.bat ./
 COPY gradle ./gradle
-RUN chmod +x gradlew
+RUN sed -i 's/\r$//' gradlew && chmod +x gradlew
 COPY build.gradle.kts settings.gradle.kts gradle.properties ./
 COPY src ./src
 RUN ./gradlew build -x test --no-daemon

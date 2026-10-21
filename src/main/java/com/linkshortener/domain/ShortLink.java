@@ -15,8 +15,6 @@ import java.time.Instant;
 public class ShortLink extends PanacheEntityBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "short_links_seq_gen")
-    @SequenceGenerator(name = "short_links_seq_gen", sequenceName = "short_links_seq", allocationSize = 1000)
     public Long id;
 
     @Column(name = "short_key", length = 8, nullable = false, unique = true)

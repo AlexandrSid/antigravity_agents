@@ -37,6 +37,7 @@ dependencies {
     // Integration testing
     testImplementation("org.testcontainers:postgresql:1.20.1")
     testImplementation("org.testcontainers:junit-jupiter:1.20.1")
+    testImplementation("org.flywaydb:flyway-database-postgresql")
 }
 
 group = "com.linkshortener"
@@ -54,11 +55,15 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<Test> {
     systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
+    systemProperty("api.version", "1.44")
+    environment("DOCKER_HOST", System.getenv("DOCKER_HOST") ?: "npipe:////./pipe/dockerDesktopLinuxEngine")
+    environment("DOCKER_API_VERSION", "1.44")
 }
 
 tasks.named<Test>("test") {
     exclude("**/*IntegrationTest.class", "**/*IT.class")
 }
+
 
 
 // Dedicated integrationTest task to support PROJECT_ENV.md command

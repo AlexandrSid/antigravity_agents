@@ -65,3 +65,30 @@ Failures encountered during execution must be categorized as:
 > [!IMPORTANT]
 > All integration test classes in `src/test/java/com/linkshortener/integration/` and the E2E lifecycle orchestration script `scripts/run_compose_e2e.py` are **IMMUTABLE**.
 > Do not modify the test assertions during Step 08. Step 08 must ensure production containers and code pass all integration gates (`INTEGRATION_GREEN_PHASE`).
+
+---
+
+## 5. Step 08 Corrections & Final Gate Evidence
+
+### Applied Corrections
+1. **Dockerfile CRLF Normalization**:
+   - Root cause: `gradlew` contained Windows CRLF line endings, causing `/bin/sh: ./gradlew: not found` (exit code 127) in the Alpine Linux builder stage.
+   - Fix: Added `RUN sed -i 's/\r$//' gradlew && chmod +x gradlew` to [Dockerfile](file:///c:/Users/Aleksandr/AI%20projects/antigravity_agents/Dockerfile).
+2. **Docker Compose Specification Update**:
+   - Removed obsolete top-level `version: "3.9"` attribute in [docker-compose.yml](file:///c:/Users/Aleksandr/AI%20projects/antigravity_agents/docker-compose.yml).
+3. **JPA Entity Assigned Identifier Fix**:
+   - Root cause: Hibernate threw `PersistentObjectException: detached entity passed to persist` during `POST /api/v1/links` because `ShortLink` had `@GeneratedValue` while `LinkServiceImpl` assigned the sequence-generated ID per SPEC §2.3.
+   - Fix: Removed `@GeneratedValue` from [ShortLink.java](file:///c:/Users/Aleksandr/AI%20projects/antigravity_agents/src/main/java/com/linkshortener/domain/ShortLink.java) to make `id` an application-assigned identifier allocated from `short_links_seq`.
+4. **Testcontainers Windows Docker Desktop API Handshake**:
+   - Root cause: Docker Desktop 4.92 (Engine 29.8 / API 1.56) returned HTTP 400 on version negotiation with older `docker-java`.
+   - Fix: Configured `DOCKER_HOST=npipe:////./pipe/dockerDesktopLinuxEngine` and `api.version=1.44` in [.docker-java.properties](file:///c:/Users/Aleksandr/AI%20projects/antigravity_agents/.docker-java.properties) and [build.gradle.kts](file:///c:/Users/Aleksandr/AI%20projects/antigravity_agents/build.gradle.kts). Added `testImplementation("org.flywaydb:flyway-database-postgresql")`.
+
+### Final Quality Gate Verification Evidence
+| Verification Type | Command | Exit Code | Result |
+|---|---|:---:|---|
+| **E2E Clean-Volume Stack** | `python scripts/run_compose_e2e.py` | `0` | Clean build, readiness polling, `POST` 201, `GET` 302, 404, cleanup |
+| **Integration Suite** | `.\gradlew.bat integrationTest --no-daemon` | `0` | 4/4 integration tests green (Postgres, Redis, Lock, Logging) |
+| **Quality Gate: Integration** | `python python-runtime/gate_runner.py . INTEGRATION_GREEN_PHASE` | `0` | `PASSED` |
+| **Quality Gate: Unit** | `python python-runtime/gate_runner.py . UNIT_GREEN_PHASE` | `0` | `PASSED` (27/27 unit & slice tests green) |
+| **Anti-Stub Gate** | `.\gradlew.bat checkNoStubs --no-daemon` | `0` | Zero stubs in `src/main` |
+
