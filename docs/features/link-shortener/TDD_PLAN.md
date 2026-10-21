@@ -12,29 +12,29 @@
 ## 0. Type Surface & Skeleton Roadmap
 Checklist of all DTOs, interfaces, entities, stubs, and components that `skeleton-writer` must place on disk before tests begin.
 
-- [ ] Implement: Inbound DTO `CreateLinkRequest` (Java 21 record) with `@NotBlank`, `@Size(max = 2048)`, `@Pattern` URL validation constraints per SPEC §2.1
-- [ ] Implement: Outbound DTO `LinkResponse` (Java 21 record) with `shortUrl`, `shortKey`, `originalUrl`, `createdAt`, `expiresAt` per SPEC §2.1
-- [ ] Implement: Outbound DTO `ProblemDetailResponse` (Java 21 record) matching RFC 7807 (`type`, `title`, `status`, `detail`, `instance`, `invalidParams`) per `.ai/guidelines/architecture/META.md`
-- [ ] Implement: Domain Entity `ShortLink` (Quarkus PanacheEntityBase) with `id` (PK via `short_links_seq`), `shortKey`, `originalUrl`, `createdAt`, `expiresAt`
-- [ ] Implement: Repository interface/class `ShortLinkRepository` implementing `PanacheRepository<ShortLink>` with method signatures:
+- [x] Implement: Inbound DTO `CreateLinkRequest` (Java 21 record) with `@NotBlank`, `@Size(max = 2048)`, `@Pattern` URL validation constraints per SPEC §2.1
+- [x] Implement: Outbound DTO `LinkResponse` (Java 21 record) with `shortUrl`, `shortKey`, `originalUrl`, `createdAt`, `expiresAt` per SPEC §2.1
+- [x] Implement: Outbound DTO `ProblemDetailResponse` (Java 21 record) matching RFC 7807 (`type`, `title`, `status`, `detail`, `instance`, `invalidParams`) per `.ai/guidelines/architecture/META.md`
+- [x] Implement: Domain Entity `ShortLink` (Quarkus PanacheEntityBase) with `id` (PK via `short_links_seq`), `shortKey`, `originalUrl`, `createdAt`, `expiresAt`
+- [x] Implement: Repository interface/class `ShortLinkRepository` implementing `PanacheRepository<ShortLink>` with method signatures:
   - `Optional<ShortLink> findByShortKey(String shortKey)`
   - `int deleteExpired(Instant now)`
-- [ ] Implement: Utility / Service `ShortKeyGenerator` interface for Sqids key generation:
+- [x] Implement: Utility / Service `ShortKeyGenerator` interface for Sqids key generation:
   - `String generateKey(long id)`
   - `OptionalLong decodeKey(String shortKey)`
-- [ ] Implement: Cache component `RedisLinkCache` interface / stub:
+- [x] Implement: Cache component `RedisLinkCache` interface / stub:
   - `Optional<String> getLongUrl(String shortKey)`
   - `void putShortToLong(String shortKey, String longUrl, long ttlSeconds)`
   - `Optional<String> getShortKeyByLongUrl(String longUrl)`
   - `void putLongToShort(String longUrl, String shortKey, long ttlSeconds)`
   - `void refreshShortToLongTtl(String shortKey, long ttlSeconds)`
-- [ ] Implement: Business Service interface `LinkService`:
+- [x] Implement: Business Service interface `LinkService`:
   - `LinkResponse createShortLink(CreateLinkRequest request)`
   - `String resolveOriginalUrl(String shortKey)`
-- [ ] Implement: Scheduled Job stub `TtlCleanupJob`:
+- [x] Implement: Scheduled Job stub `TtlCleanupJob`:
   - `@Scheduled(cron = "{app.cleanup.cron}") void purgeExpiredLinks()`
-- [ ] Implement: REST Resource stub `LinkResource` (`POST /api/v1/links`) returning empty / "Not Implemented"
-- [ ] Implement: REST Resource stub `RedirectResource` (`GET /{shortKey}`) returning empty / "Not Implemented"
+- [x] Implement: REST Resource stub `LinkResource` (`POST /api/v1/links`) returning empty / "Not Implemented"
+- [x] Implement: REST Resource stub `RedirectResource` (`GET /{shortKey}`) returning empty / "Not Implemented"
 
 ---
 

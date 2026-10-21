@@ -19,8 +19,17 @@ from __future__ import annotations
 import re
 import subprocess
 import dataclasses
+import sys
 from pathlib import Path
 from typing import Optional
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 
 
 # ---------------------------------------------------------------------------
@@ -346,7 +355,10 @@ if __name__ == "__main__":
     env_manifest = load_manifest(root)
     result = run_gate(gate_type, env_manifest, root)
     print(f"Gate: {result.gate}")
-    print(f"Passed: {result.passed}")
     if not result.passed:
         print(f"Error: {result.error_summary}")
+        if result.output:
+            print("\n--- Command Output ---")
+            print(result.output)
     sys.exit(0 if result.passed else 1)
+

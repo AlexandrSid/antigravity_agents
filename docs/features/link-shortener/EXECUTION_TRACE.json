@@ -46,5 +46,21 @@
     },
     "cost_usd": 0.0015,
     "exit_status": "SUCCESS"
+  },
+  {
+    "step_id": "04",
+    "agent_role": "Skeleton Writer",
+    "model_used": "gemini-3.8-flash-low",
+    "provider": "google",
+    "timestamp_start": "2026-10-21T19:05:00Z",
+    "timestamp_end": "2026-10-21T19:21:00Z",
+    "duration_sec": 960.0,
+    "tokens": {
+      "prompt_tokens": 6200,
+      "completion_tokens": 4500,
+      "total_tokens": 10700
+    },
+    "cost_usd": 0.0018,
+    "exit_status": "SUCCESS"
   }
 ]

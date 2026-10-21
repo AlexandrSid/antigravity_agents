@@ -3,9 +3,10 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
-}
-plugins {
-    id("io.quarkus") version "3.15.1"
+    plugins {
+        id("io.quarkus") version "3.15.1"
+    }
 }
 
 rootProject.name = "link-shortener"
+

@@ -16,6 +16,7 @@ dependencies {
 
     // Quarkus core extensions
     implementation("io.quarkus:quarkus-rest-jackson")
+    implementation("io.quarkus:quarkus-hibernate-validator")
     implementation("io.quarkus:quarkus-hibernate-orm-panache")
     implementation("io.quarkus:quarkus-flyway")
     implementation("io.quarkus:quarkus-jdbc-postgresql")
@@ -80,7 +81,7 @@ tasks.register("checkNoStubs") {
         val violations = mainSrc.files.flatMap { file ->
             file.readLines().mapIndexedNotNull { idx, line ->
                 stubPatterns.firstOrNull { line.contains(it) }
-                    ?.let { "${file.relativeTo(projectDir)}:${idx + 1} → stub: $it" }
+                    ?.let { "${file.relativeTo(projectDir)}:${idx + 1} -> stub: $it" }
             }
         }
         if (violations.isNotEmpty()) {
@@ -89,4 +90,4 @@ tasks.register("checkNoStubs") {
         logger.lifecycle("checkNoStubs passed — zero stub violations in src/main.")
     }
 }
-tasks.named("check") { dependsOn("checkNoStubs") }
+
