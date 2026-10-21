@@ -84,6 +84,8 @@
 - [x] **Pre-Agent Hook**: Проверка наличия всех входных артефактов и валидация готовности окружения (JDK 21, Docker, Git, Gradle) до запуска LLM (`python-runtime/preflight_check.py` и `sdlc-orchestrator`).
 - [x] **Post-Agent Hook**: Автоматический запуск сборки и верификации через `gate_runner.py` сразу после генерации шага. Сбор телеметрии вызовов инструментов и событий через `profiler_hook.py` (PostToolUse / PostInvocation).
 - [x] **Guardrail Hook**: Программная блокировка несанкционированных изменений (Write Scope в `tool_shell.py`, запрет прямого коммита в защищенные ветки в `git_engine.py`, сверка с Pre-Approved Command Allowlist в `.agents/hooks.json`).
+- [ ] **Model Switching Advisory (In-IDE)**: Автоматическая генерация оповещения-рекомендации пользователю о переключении модели перед стартом шага на основе профиля из `.ai/agents-config.md`.
+- [ ] **Context Isolation Audit & Tracing**: Явная фиксация каждого этапа и состава изоляции контекста (загруженная роль, проверенные входные артефакты, границы Write Scope) в `PROFILING_SUMMARY.md`, `EXECUTION_TRACE.json` и логах оркестратора.
 
 ### Стадия 4.2: Инструменты агентов (Skills / Tools)
 - [ ] **Skill `ast_structure_extractor`**: Извлечение только сигнатур публичных методов и аннотаций классов для урезания передаваемого кода на 90%.

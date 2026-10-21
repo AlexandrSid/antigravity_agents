@@ -10,3 +10,4 @@ __pycache__/
 *.pyc
 .ai/scripts/.current_step_context.md
 .kotlin/
+bin/
