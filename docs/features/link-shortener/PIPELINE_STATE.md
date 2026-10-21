@@ -3,10 +3,10 @@
 > **Pipeline SSOT**: `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`
 > **Feature Branch**: `agent-feature-link-shortener`
 > **Overall Status**: `IN_PROGRESS`
-> **Current Step**: `03`
+> **Current Step**: `04`
 > **Active Environment**: `antigravity`
 > **Created At**: `2026-10-20T13:38:00+02:00`
-> **Last Updated**: `2026-10-21T18:40:00+02:00`
+> **Last Updated**: `2026-10-21T19:02:00+02:00`
 
 ---
 
@@ -21,7 +21,7 @@
 |:---:|---|:---:|:---:|:---:|:---:|:---:|
 | [x] **01** | **Architect** | `COMPLETED` | `NONE` | `e9aa55b` | `antigravity` | `2026-10-20T13:41:10+02:00` |
 | [x] **02** | **TDD Planner** | `COMPLETED` | `NONE` | `ea3e3e0` | `antigravity` | `2026-10-20T15:55:00+02:00` |
-| [ ] **03** | **Environment Bootstrap** | `PENDING` | `NONE` | — | — | — |
+| [x] **03** | **Environment Bootstrap** | `COMPLETED` | `NONE` | `dcbe14d` | `antigravity` | `2026-10-21T19:02:00+02:00` |
 | [ ] **04** | **Skeleton Writer** | `PENDING` | `COMPILE_CHECK` | — | — | — |
 | [ ] **05** | **Test Writer** | `PENDING` | `UNIT_RED_PHASE` | — | — | — |
 | [ ] **06** | **Code Writer** | `PENDING` | `UNIT_GREEN_PHASE` | — | — | — |
@@ -39,7 +39,7 @@
 - **Step 02 (TDD Planner)**:
   - [x] `docs/features/link-shortener/TDD_PLAN.md`
 - **Step 03 (Environment Bootstrap)**:
-  - [ ] Build manifest & directory tree per `SPEC.md`
+  - [x] Build manifest & directory tree per `SPEC.md`
 - **Step 04 (Skeleton Writer)**:
   - [ ] Compilable surface types (DTOs, entities, interfaces, stubs)
 - **Step 05 (Test Writer)**:
@@ -65,3 +65,4 @@
 | 2026-10-20T13:41:10+02:00 | 02 | IN_PROGRESS | antigravity | TDD Planner agent started |
 | 2026-10-20T15:55:00+02:00 | 02 | COMPLETED | antigravity | SHA: ea3e3e0 — TDD_PLAN.md finalized |
 | 2026-10-21T18:40:00+02:00 | 03 | READY | antigravity | Reset pipeline to Step 03 pre-bootstrap state; layer meta-standards & anti-stub quality gates activated |
+| 2026-10-21T19:02:00+02:00 | 03 | COMPLETED | antigravity | Build manifests, configs, migrations, folder tree, and checkNoStubs gate finalized |

@@ -1,0 +1,11 @@
+.git
+.gradle
+build
+.idea
+*.iml
+.ai
+.antigravity
+.cursor
+python-runtime
+docs
+control-panel

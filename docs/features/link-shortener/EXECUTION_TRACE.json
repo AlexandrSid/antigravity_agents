@@ -30,5 +30,21 @@
     },
     "cost_usd": 0.00207,
     "exit_status": "SUCCESS"
+  },
+  {
+    "step_id": "03",
+    "agent_role": "Environment Bootstrap",
+    "model_used": "gemini-3.8-flash-low",
+    "provider": "google",
+    "timestamp_start": "2026-10-21T18:43:00Z",
+    "timestamp_end": "2026-10-21T19:02:00Z",
+    "duration_sec": 120.0,
+    "tokens": {
+      "prompt_tokens": 4600,
+      "completion_tokens": 3900,
+      "total_tokens": 8500
+    },
+    "cost_usd": 0.0015,
+    "exit_status": "SUCCESS"
   }
 ]
