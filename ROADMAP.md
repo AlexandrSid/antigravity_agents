@@ -6,7 +6,7 @@
 
 ### Стадия 1.1: Контракты агентов и передача состояния
 - [x] **Ролевая модель и конвейер**: Разработка 9 специализированных ролей (`.ai/rules/`) с жесткими границами записи, входами/выходами и регламентом `.ai/GREENFIELD_SDLC_PIPELINE.md`.
-- [x] **Передача состояния через файлы**: Вся передача данных между шагами происходит исключительно через файлы-артефакты (`docs/PRD.md`, `SPEC.md`, `TDD_PLAN.md`, `INTEGRATION_REPORT.md`, `PROJECT_ENV.md`, `SUMMARY.md`).
+- [x] **Передача состояния через файлы**: Вся передача данных между шагами происходит исключительно через файлы-артефакты (`docs/features/{feature}/PRD.md`, `docs/features/{feature}/SPEC.md`, `docs/features/{feature}/TDD_PLAN.md`, `docs/features/{feature}/INTEGRATION_REPORT.md`, `docs/PROJECT_ENV.md`, `docs/features/{feature}/SUMMARY.md`).
 - [x] **Формирование контекстного среза (концептуальное)**: Определение минимального окна вызова (системная роль + входные артефакты шага + точный промпт-задание).
 
 ### Стадия 1.2: Маршрутизация моделей и профили задач
@@ -84,31 +84,45 @@
 - [x] **Pre-Agent Hook**: Проверка наличия всех входных артефактов и валидация готовности окружения (JDK 21, Docker, Git, Gradle) до запуска LLM (`python-runtime/preflight_check.py` и `sdlc-orchestrator`).
 - [x] **Post-Agent Hook**: Автоматический запуск сборки и верификации через `gate_runner.py` сразу после генерации шага. Сбор телеметрии вызовов инструментов и событий через `profiler_hook.py` (PostToolUse / PostInvocation).
 - [x] **Guardrail Hook**: Программная блокировка несанкционированных изменений (Write Scope в `tool_shell.py`, запрет прямого коммита в защищенные ветки в `git_engine.py`, сверка с Pre-Approved Command Allowlist в `.agents/hooks.json`).
-- [ ] **Model Switching Advisory (In-IDE)**: Автоматическая генерация оповещения-рекомендации пользователю о переключении модели перед стартом шага на основе профиля из `.ai/agents-config.md`.
-- [ ] **Context Isolation Audit & Tracing**: Явная фиксация каждого этапа и состава изоляции контекста (загруженная роль, проверенные входные артефакты, границы Write Scope) в `PROFILING_SUMMARY.md`, `EXECUTION_TRACE.json` и логах оркестратора.
+- [x] **Model Switching Advisory (In-IDE)**: Автоматическая генерация оповещения-рекомендации пользователю о переключении модели перед стартом шага на основе профиля из `.ai/agents-config.md`.
+- [x] **Context Isolation Audit & Tracing**: Явная фиксация каждого этапа и состава изоляции контекста (загруженная роль, проверенные входные артефакты, границы Write Scope) в `PROFILING_SUMMARY.md`, `EXECUTION_TRACE.json` и логах оркестратора.
 
 ### Стадия 4.2: Инструменты агентов (Skills / Tools)
 - [ ] **Skill `ast_structure_extractor`**: Извлечение только сигнатур публичных методов и аннотаций классов для урезания передаваемого кода на 90%.
 - [ ] **Skill `db_schema_inspector`**: Прямой запрос к DDL и выполнение `EXPLAIN ANALYZE` из локального Docker-контейнера.
 - [ ] **Skill `openapi_diff_checker`**: Сравнение фактического Spring REST Контроллера с контрактом в `SPEC.md`.
 
-### Стадия 4.3: Библиотека промышленных стандартов (Core Production Stacks)
-- [ ] **СУБД и персистентность**:
-  - `databases-relational/postgresql.md`: Схемы, search_path, partial indexes (`WHERE`), JSONB, pgvector, миграции Flyway/Liquibase.
-  - `databases-relational/mysql.md`: Особенности не-транзакционного DDL, кодировка `utf8mb4`, автоинкременты.
-- [ ] **Кэширование и In-Memory хранилища**:
-  - `caching/redis.md`: Стратегии Cache-Aside / Write-Through, структуры данных (String, Hash, Set, ZSET), TTL, eviction policies, распределённые блокировки (Redlock), rate-limiting.
+### Стадия 4.3: Библиотека промышленных стандартов и слоевая архитектура (Layer Meta-Standards & Technology Slots)
+> **Статус**: Выполнено (`[x]`)  
+> **Результат**: Модульная архитектура инженерных стандартов `.ai/guidelines/<layer>/` (9 слоёв: `architecture`, `languages`, `testing`, `persistence`, `infrastructure`, `environment`, `documentation`, `messaging`, `caching`), декомпозиция на универсальные мета-стандарты (`META.md`), технологические слоты реализации (`slots/<tech>.md`) и руководства по расширению (`EXTENSION_GUIDE.md`).
+
+- [x] **СУБД и персистентность**:
+  - [x] `persistence/slots/postgresql.md`: Схемы, search_path, partial indexes (`WHERE`), Flyway миграции, последовательности (Sequence allocationSize).
+  - [x] `persistence/slots/h2.md`: In-memory H2 для быстрых изолированных срезовых тестов.
+  - [ ] `persistence/slots/mysql.md`: Особенности не-транзакционного DDL, кодировка `utf8mb4`, автоинкременты.
+- [x] **Кэширование и In-Memory хранилища**:
+  - [x] `caching/slots/redis.md`: Стратегии Cache-Aside / Write-Through, строковые ключи, TTL, продление TTL (touch), изоляция неймспейсов.
+- [x] **Брокеры сообщений и очереди**:
+  - [x] `messaging/slots/kafka.md`: Топики, consumer groups, idempotence, Schema Registry, retry-топики.
+  - [ ] `messaging/slots/rabbitmq.md`: AMQP Exchanges, Queues, DLX, ack/nack.
+- [x] **Фреймворки и языки**:
+  - [x] `architecture/slots/quarkus.md`: Quarkus 3.x, fast-jar, Panache, Flyway, RESTEasy Reactive, SmallRye OpenAPI.
+  - [x] `languages/slots/java.md`: Java 21 LTS, записи (records), pattern matching, var.
+  - [x] `languages/slots/kotlin.md`: Kotlin standards.
+  - [x] `languages/slots/python.md`: Python standards.
+  - [x] `languages/slots/typescript.md`: TypeScript standards.
+  - [ ] `architecture/slots/spring-boot.md`: Spring Boot 3.x, Spring Data, Actuator, Profiles, Security, Testcontainers.
+  - [ ] `architecture/slots/fastapi.md`: Python 3.11+, Pydantic v2, lifespan, dependency injection, async I/O.
+- [x] **Тестирование и валидация**:
+  - [x] `testing/slots/java.md`: JUnit 5, RestAssured, Mockito, обязательная behaviour verification, Anti-Deadlock моки, `checkNoStubs` гейт.
+  - [x] `testing/slots/kotlin.md`, `python.md`, `typescript.md`.
+  - [ ] `testing/slots/wiremock.md`: Эмуляция внешних HTTP API и mock-серверы.
+- [x] **Инфраструктура и среда выполнения**:
+  - [x] `infrastructure/slots/docker-compose.md`: Изоляция проектов (`-p`), детерминированные имена контейнеров, монтирование томов, флаги принудительного пересоздания `--force-recreate --build`.
+  - [x] `environment/slots/local-dev.md`: Локальный манифест `docs/PROJECT_ENV.md`.
+  - [x] `documentation/slots/feature-summary.md`: Структура `SUMMARY.md` с AI usage restriction notice.
 - [ ] **Полнотекстовый поиск**:
-  - `search-analytics/elasticsearch.md`: Маппинги, стемминг/анализаторы, bool queries, агрегации, векторный kNN поиск, ILM (Index Lifecycle Management).
-- [ ] **Брокеры сообщений и очереди**:
-  - `messaging-queues/kafka.md`: Партиционирование, ключи шардирования, consumer groups, idempotence, Schema Registry (Avro/Protobuf), DLQ, retry-топики.
-  - `messaging-queues/rabbitmq.md`: AMQP Exchanges (Direct, Topic, Fanout), Queues, Bindings, dead-letter exchanges (DLX), подтверждения (ack/nack).
-- [ ] **Фреймворки и языки**:
-  - `frameworks/spring-boot.md`: Spring Boot 3.x, Spring Data, Actuator, Profiles, Security, Testcontainers.
-  - `frameworks/fastapi.md`: Python 3.11+, Pydantic v2, lifespan, dependency injection, async I/O.
-- [ ] **Интеграционное тестирование**:
-  - `testing/testcontainers.md`: Docker-backed интеграционные тесты (Postgres, Redis, Kafka) с динамическими свойствами.
-  - `testing/wiremock.md`: Эмуляция внешних HTTP API и mock-серверы.
+  - `search-analytics/elasticsearch.md`: Маппинги, стемминг/анализаторы, bool queries, агрегации, векторный kNN поиск, ILM.
 
 ---
 
@@ -161,7 +175,13 @@
 
 ## 📌 Стандарты и правила проекта (обязательно к соблюдению)
 - **Subscription-First & Native Execution**: По умолчанию оркестратор работает на нативных мощностях и подписочных токенах текущей среды выполнения (`provider = "native"`), не требуя внешних платных API-ключей. Конфигурационные файлы служат для маршрутизации ролей или осознанного перенаправления на локальные модели (Ollama, LM Studio).
-- **Единый источник истины (SSOT)**: `docs/PRD.md`, `docs/features/{feature}/SPEC.md`, `docs/features/{feature}/TDD_PLAN.md` и `docs/PROJECT_ENV.md`.
+- **Единый источник истины (SSOT)**: `docs/features/{feature}/PRD.md`, `docs/features/{feature}/SPEC.md`, `docs/features/{feature}/TDD_PLAN.md` и `docs/PROJECT_ENV.md`.
+- **Локализация артефактов фичи (`docs/features/{feature}/`)**: Файлы бизнес-требований (`PRD.md`) и технической спецификации (`SPEC.md`) обязаны размещаться внутри изолированного каталога фичи `docs/features/{feature}/` (`docs/features/{feature}/PRD.md` и `docs/features/{feature}/SPEC.md`), а не в корневом каталоге `docs/`. В корне `docs/` хранятся только общие проектные манифесты окружения (`docs/PROJECT_ENV.md`). Это обеспечивает полную автономность и изоляцию контекста каждой фичи.
+- **Docker Compose Invariant — Принудительная перезапись и очистка артефактов**: Первый и любые контрольные запуски окружения Docker Compose в рамках пайплайна (`environment-bootstrap`, `integration-test-writer`, `integration-code-writer`) обязаны выполняться с флагами принудительной пересборки и пересоздания потенциально имеющихся одноимённых артефактов (образов, контейнеров, сетей):
+  ```bash
+  docker compose -p {project} up -d --build --force-recreate
+  ```
+  с обязательной предварительной очисткой устаревших томов и сиротских контейнеров при чистом рестарте (`docker compose -p {project} down -v --remove-orphans`), исключая любые коллизии с артефактами предыдущих запусков.
 - **Ограничения `SUMMARY.md`**: Документ, генерируемый шагом 09 (`.ai/rules/documenter.md`), предназначен исключительно для людей и **не** может использоваться AI-агентами как SSOT.
 - **Стандарт путей тестов**: Юнит-тесты располагаются в `src/test/java/`, интеграционные тесты — в `src/integrationTest/java/`.
 - **Языковой стандарт**: Документация пайплайнов и конфигурации — русский язык. Правила и инструкции ролей (`.ai/rules/*.md`) — английский язык.

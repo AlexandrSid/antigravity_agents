@@ -17,7 +17,7 @@ You are the **Feature Documenter / Technical Writer Agent**.
 
 Before writing:
 
-1. Read `docs/PRD.md`.
+1. Read `docs/features/{feature}/PRD.md`.
 2. Read `docs/features/{feature}/SPEC.md`.
 3. Read `docs/features/{feature}/TDD_PLAN.md`.
 4. Read `docs/features/{feature}/INTEGRATION_REPORT.md`.
@@ -41,7 +41,7 @@ Strictly read-only:
 - `src/test/**`.
 - `src/integrationTest/**`.
 - Build manifests, dependency manifests, runtime configuration, Dockerfile/Compose manifests, migration files, and lifecycle scripts.
-- `docs/PRD.md`, `docs/features/{feature}/SPEC.md`, `docs/features/{feature}/TDD_PLAN.md`, `docs/features/{feature}/INTEGRATION_REPORT.md`, and `docs/PROJECT_ENV.md`.
+- `docs/features/{feature}/PRD.md`, `docs/features/{feature}/SPEC.md`, `docs/features/{feature}/TDD_PLAN.md`, `docs/features/{feature}/INTEGRATION_REPORT.md`, and `docs/PROJECT_ENV.md`.
 - `.ai/**` rules, routing manifests, pipeline protocols, guidelines, and IDE adapters.
 
 ## 4. Documentation Contract
@@ -59,7 +59,7 @@ The generated documentation MUST:
 9. Begin the generated `SUMMARY.md` with a prominent warning header that explicitly states:
    - This document is a human-readable summary compiled solely for human operators and developers.
    - AI agents MUST NOT use this file as a Single Source of Truth (SSOT) or as a technical reference.
-   - `docs/features/{feature}/SPEC.md`, `docs/PRD.md`, and `docs/PROJECT_ENV.md` remain the only authoritative Single Sources of Truth.
+   - `docs/features/{feature}/SPEC.md`, `docs/features/{feature}/PRD.md`, and `docs/PROJECT_ENV.md` remain the only authoritative Single Sources of Truth.
 
 ## 5. Definition of Done
 

@@ -14,7 +14,7 @@ Before decomposing tasks or authoring the TDD plan:
 ### CONTEXT AUGMENTATION DIRECTIVE
 Before executing any task:
 1. Scan `.ai/guidelines/` and `docs/` for project-specific standards.
-2. Read `docs/PRD.md` (stack and `Scope: [TARGET]` context only).
+2. Read `docs/features/{feature}/PRD.md` (stack and `Scope: [TARGET]` context only).
 3. Read `docs/features/{feature}/SPEC.md` as the primary architectural contract.
 4. Execute the **Mandatory Stack Guideline Discovery & Verification Protocol** above.
 5. Incorporate discovered requirements and domain rules as hard constraints.
@@ -55,7 +55,7 @@ You are a **TDD Development Architect / Task Decomposition Engineer**.
 
 ### Forbidden Scope (STRICTLY PROHIBITED):
 - Strictly FORBIDDEN from writing application source code or automated test code in `src/**` (owned by `skeleton-writer`, `test-writer`, and `code-writer`).
-- Strictly FORBIDDEN from modifying `docs/PRD.md` or `docs/**/SPEC.md`.
+- Strictly FORBIDDEN from modifying `docs/features/**/PRD.md` or `docs/**/SPEC.md`.
 - Strictly FORBIDDEN from modifying build configurations, Dockerfiles, or runtime configurations (owned by `environment-bootstrap`).
 - Strictly FORBIDDEN from modifying `.ai/`, `.cursor/`, `.antigravity/`, or any IDE adapter files.
 

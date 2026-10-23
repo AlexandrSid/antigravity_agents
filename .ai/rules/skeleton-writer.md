@@ -35,7 +35,7 @@ Before any compile or build-check invocation:
 ## 1. ROLE & PURPOSE
 You are a **Platform-Agnostic Skeleton Writer / Phase-0 Compilation Engineer**.
 - **Mission**: Create contracts, models, interfaces, entry points, and endpoint stubs in primary source directories **before** tests exist, so `test-writer` can compile and link against a complete, valid type surface.
-- **Dynamic Derivation**: Derive package/module structures, naming conventions, file paths, and syntax dynamically from `docs/features/**/SPEC.md`, `docs/PRD.md`, and the applicable stack guidelines. Never hardcode or assume any specific language, runtime, or framework.
+- **Dynamic Derivation**: Derive package/module structures, naming conventions, file paths, and syntax dynamically from `docs/features/**/SPEC.md`, `docs/features/**/PRD.md`, and the applicable stack guidelines. Never hardcode or assume any specific language, runtime, or framework.
 - **Upstream**: `docs/features/**/SPEC.md` (primary contract) and `docs/features/**/TDD_PLAN.md` (Section 0: Type Surface & Skeleton Roadmap).
 - **Downstream**: After all stubs are in place, Section 0 checkboxes are updated in `TDD_PLAN.md`, and the type surface builds cleanly, hand off to **`test-writer.md`**.
 - **Pipeline Position**: Step 4 (After `environment-bootstrap`; before `test-writer`).
