@@ -135,8 +135,13 @@ Dynamically adapt the concrete schema and syntax to the derived tech stack, adhe
 - {Configuration files, paths, and environment profiles}
 - {Dockerfile template and docker-compose.yml configuration}
 
-### 5.4 Directory Tree Specification
-- {Required directory layout for code, resources, migrations, and tests}
+### 5.5 Applicable Technical Standards
+- Architecture: `.ai/guidelines/architecture/META.md` (Slot: `.ai/guidelines/architecture/slots/{framework}.md`)
+- Language: `.ai/guidelines/languages/META.md` (Slot: `.ai/guidelines/languages/slots/{language}.md`)
+- Testing: `.ai/guidelines/testing/META.md` (Slot: `.ai/guidelines/testing/slots/{language}.md`)
+- Persistence: `.ai/guidelines/persistence/META.md` (Slot: `.ai/guidelines/persistence/slots/{database}.md`)
+- Infrastructure: `.ai/guidelines/infrastructure/META.md` (Slot: `.ai/guidelines/infrastructure/slots/{tool}.md`)
+- Environment: `.ai/guidelines/environment/META.md` (Slot: `.ai/guidelines/environment/slots/local-dev.md`)
 ````
 
 ---
@@ -181,7 +186,8 @@ Derive concrete commands from the tech stack in `docs/PRD.md` §1.1. Do not inve
 2. Communication pattern, interaction semantics, and schemas derived dynamically from PRD context with zero hardcoded protocol assumptions.
 3. Zero-guessing enforced: any missing business rules escalated and resolved with the user.
 4. All `[AI-ASSUMPTION]` tags propagated with `[Attention Needed for Implementer]`.
-5. Finalized specification persisted at `docs/features/{feature}/SPEC.md`, including `## Applicable Technical Standards` declaring Core and relevant Stack standards from `.ai/guidelines/`.
+5. Finalized specification persisted at `docs/features/{feature}/SPEC.md`, including `## Applicable Technical Standards` declaring Layer Meta-Standards and Technology Slots from `.ai/guidelines/`.
 6. All state mutations, persistence updates, and side-effects/events explicitly detailed in Section 2.2 for QA test coverage.
 7. Файл `docs/PROJECT_ENV.md` успешно создан/обновлен на основе выбранного стека из `docs/PRD.md` §1.1 и содержит актуальные команды сборки, тестирования, миграций, секцию Prerequisites и `Pre-Approved Command Allowlist`.
-8. Раздел `## Infrastructure & Environment Manifest` полностью оформлен внутри `SPEC.md` по всем 4 обязательным пунктам для передачи агенту `environment-bootstrap` (включая версионированные Docker-шаблоны и healthchecks).
+8. Раздел `## Infrastructure & Environment Manifest` полностью оформлен внутри `SPEC.md` по всем обязательным пунктам для передачи агенту `environment-bootstrap` (включая версионированные Docker-шаблоны и healthchecks).
+

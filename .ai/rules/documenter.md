@@ -24,6 +24,7 @@ Before writing:
 5. Read `docs/PROJECT_ENV.md`.
 6. Inspect the completed implementation in `src/main/**` and the verification coverage in `src/test/**` and `src/integrationTest/**`.
 7. Treat completed code and test evidence as read-only facts. Do not infer capabilities, commands, configuration values, or verification results that are not present in the source artifacts.
+8. Read `.ai/guidelines/documentation/META.md` and `.ai/guidelines/documentation/slots/feature-summary.md` for the mandatory report structure.
 
 ## 3. Write Scope
 
