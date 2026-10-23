@@ -5,3 +5,9 @@ data/
 *.iml
 .DS_Store
 .ai/agents-config.local.md
+__pycache__/
+.pytest_cache/
+*.pyc
+.ai/scripts/.current_step_context.md
+.kotlin/
+bin/

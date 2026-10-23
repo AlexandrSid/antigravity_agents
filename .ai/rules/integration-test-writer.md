@@ -19,8 +19,8 @@ Before writing:
 
 1. Read `docs/features/{feature}/SPEC.md`.
 2. Read only Section 2 of `docs/features/{feature}/TDD_PLAN.md` as the active scenario list.
-3. Read `.ai/guidelines/engineering-standards.md`.
-4. Read docs/PROJECT_ENV.md as the Single Source of Truth for integration build, run, and clean commands.
+3. Read `.ai/guidelines/infrastructure/META.md`, `.ai/guidelines/persistence/META.md`, and applicable technology slots.
+4. Read `docs/PROJECT_ENV.md` as the Single Source of Truth for integration build, run, and clean commands.
 5. Inspect existing Docker/runtime manifests and the completed Unit/Slice suite.
 
 ## 3. Write Scope
@@ -45,7 +45,7 @@ The role does not mark Section 2 checkboxes. A Section 2 item is verified only a
 
 ## 4. Test and Orchestration Contract
 
-- Start from a unique Compose project and clean volume.
+- Start from a unique Compose project (`-p ${COMPOSE_PROJECT_NAME}`) and clean volume (`down -v --remove-orphans`). Always pass `--build --force-recreate`.
 - Build the real production Dockerfiles; do not substitute Testcontainers or embedded infrastructure when Section 2 requires Compose.
 - Use finite readiness timeouts. Container-running state alone is not application readiness.
 - Execute DB/Flyway, container/runtime, and black-box HTTP scenarios from Section 2.

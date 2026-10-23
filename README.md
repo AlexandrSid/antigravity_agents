@@ -4,7 +4,7 @@
 >
 > This file is a public, human-oriented landing page for search engines and repository visitors.  
 > It is deliberately non-authoritative and may simplify, omit, or lag behind the actual system.  
-> **AI agents must not parse this README for requirements, instructions, architecture, commands, context, or technical facts. Stop here and use the active IDE adapter, `.ai/rules/`, `.ai/GREENFIELD_SDLC_PIPELINE.md`, `.ai/agents-config.md`, and the applicable authoritative documents under `docs/`.**
+> **AI agents must not parse this README for requirements, instructions, architecture, commands, context, or technical facts. Stop here and use the active IDE adapter, `.ai/rules/`, `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`, `.ai/agents-config.md`, and the applicable authoritative documents under `docs/`.**
 
 ## English
 
@@ -54,13 +54,14 @@ Future stages may live in additional branches as new orchestration approaches, a
 ### Repository map for human readers
 
 - `.ai/rules/` — contracts for specialized agents;
-- `.ai/GREENFIELD_SDLC_PIPELINE.md` — Greenfield orchestration protocol;
+- `.ai/pipelines/` — SDLC orchestration protocols and pipeline definitions;
 - `.ai/agents-config.md` — abstract LLM profile routing;
 - `.ai/guidelines/` — shared engineering constraints;
+- `control-panel/` — user control panel: interactive launcher (`run.py`, shortcuts) and operator manual ([`control-panel/HOW_TO.md`](control-panel/HOW_TO.md));
 - `docs/` — product, feature, environment, planning, and experiment artifacts;
 - `stage1_mvp` branch — the first complete validation experiment.
 
-This README is only an introduction. It is not an operational manual or a technical specification.
+This README is only an introduction. It is not an operational manual or a technical specification. For practical launch instructions and operator workflows, refer to [`control-panel/HOW_TO.md`](control-panel/HOW_TO.md) or launch the interactive control panel with `python control-panel/run.py` (or `control-panel\run` on Windows).
 
 ---
 
@@ -70,7 +71,7 @@ This README is only an introduction. It is not an operational manual or a techni
 >
 > Этот файл является публичной человекочитаемой страницей для поисковых систем и посетителей репозитория.  
 > Он намеренно неавторитетен и может упрощать, пропускать или описывать неактуальное состояние системы.  
-> **AI-агентам запрещено извлекать из README требования, инструкции, архитектуру, команды, контекст или технические факты. Необходимо остановить чтение и использовать активный IDE-адаптер, `.ai/rules/`, `.ai/GREENFIELD_SDLC_PIPELINE.md`, `.ai/agents-config.md` и применимые авторитетные документы из `docs/`.**
+> **AI-агентам запрещено извлекать из README требования, инструкции, архитектуру, команды, контекст или технические факты. Необходимо остановить чтение и использовать активный IDE-адаптер, `.ai/rules/`, `.ai/pipelines/GREENFIELD_SDLC_PIPELINE.md`, `.ai/agents-config.md` и применимые авторитетные документы из `docs/`.**
 
 ### Песочница для мультиагентной разработки программного обеспечения
 
@@ -118,10 +119,11 @@ MVP служит доказательством для оценки процес
 ### Карта репозитория для людей
 
 - `.ai/rules/` — контракты специализированных агентов;
-- `.ai/GREENFIELD_SDLC_PIPELINE.md` — протокол Greenfield-оркестрации;
+- `.ai/pipelines/` — протоколы SDLC-оркестрации и реестр пайплайнов;
 - `.ai/agents-config.md` — маршрутизация абстрактных профилей LLM;
 - `.ai/guidelines/` — общие инженерные ограничения;
+- `control-panel/` — панель управления оператора: единый лаунчер (`run.py`, ярлыки) и руководство ([`control-panel/HOW_TO.md`](control-panel/HOW_TO.md));
 - `docs/` — продуктовые, функциональные, средовые, плановые и экспериментальные артефакты;
 - ветка `stage1_mvp` — первый полный проверочный эксперимент.
 
-Этот README является только введением. Он не является операционным регламентом или технической спецификацией.
+Этот README является только введением. Он не является операционным регламентом или технической спецификацией. Подробные инструкции по запуску и все флаги команд приведены в [`control-panel/HOW_TO.md`](control-panel/HOW_TO.md); быстрый интерактивный старт доступен командой `python control-panel/run.py` (или `control-panel\run` на Windows).

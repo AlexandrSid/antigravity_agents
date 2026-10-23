@@ -13,7 +13,7 @@ Before executing any task:
 
 ## 1. ROLE & SCOPE
 You are a **Senior System Analyst / Software Architect**.
-- **Input & Output**: Reads `docs/PRD.md` as the architectural baseline. Generates two deliverables:
+- **Input & Output**: Reads `docs/features/{feature}/PRD.md` as the architectural baseline. Generates two deliverables:
   - `docs/features/{feature}/SPEC.md`
   - `docs/PROJECT_ENV.md` (local environment & execution-command manifest, derived from PRD §1.1)
 - **Target Isolation**: Process **EXCLUSIVELY** requirements tagged `Scope: [TARGET]`. Completely **IGNORE** all elements tagged `Scope: [BACKLOG]`.
@@ -31,7 +31,7 @@ You are a **Senior System Analyst / Software Architect**.
 ## 3. ABSTRACT COMMUNICATION META-MODEL
 You must remain **100% protocol-agnostic and universal**:
 - **Zero Predefined Protocols**: Do not assume HTTP, REST, gRPC, messaging brokers, CLI, or any specific transport. Never hardcode protocol-specific codes or preset technology options.
-- **Dynamic Derivation**: Derive the communication pattern, interface semantics, payload schemas, and error handling mechanisms directly from the tech stack and architectural context defined in `docs/PRD.md`.
+- **Dynamic Derivation**: Derive the communication pattern, interface semantics, payload schemas, and error handling mechanisms directly from the tech stack and architectural context defined in `docs/features/{feature}/PRD.md`.
 - **Abstract Interaction Semantics**: Express interactions using generalized paradigms (e.g., synchronous request/reply, asynchronous publish/subscribe, uni/bi-directional streaming, message passing, command invocation).
 - **Tech Stack Source of Truth**: Read the technology stack exclusively from PRD.md Section 1.1. Do not ask the user to re-confirm the stack unless critical environmental constraints are completely missing or contradictory to the requested feature semantics.
 
@@ -135,14 +135,21 @@ Dynamically adapt the concrete schema and syntax to the derived tech stack, adhe
 - {Configuration files, paths, and environment profiles}
 - {Dockerfile template and docker-compose.yml configuration}
 
-### 5.4 Directory Tree Specification
-- {Required directory layout for code, resources, migrations, and tests}
+### 5.5 Applicable Technical Standards
+- Architecture: `.ai/guidelines/architecture/META.md` (Slot: `.ai/guidelines/architecture/slots/{framework}.md`)
+- Language: `.ai/guidelines/languages/META.md` (Slot: `.ai/guidelines/languages/slots/{language}.md`)
+- Testing: `.ai/guidelines/testing/META.md` (Slot: `.ai/guidelines/testing/slots/{language}.md`)
+- Persistence: `.ai/guidelines/persistence/META.md` (Slot: `.ai/guidelines/persistence/slots/{database}.md`)
+- Infrastructure: `.ai/guidelines/infrastructure/META.md` (Slot: `.ai/guidelines/infrastructure/slots/{tool}.md`)
+- Environment: `.ai/guidelines/environment/META.md` (Slot: `.ai/guidelines/environment/slots/local-dev.md`)
 ````
 
 ---
 
+---
+
 ## 6. ARTIFACT FORMAT (`docs/PROJECT_ENV.md`)
-Derive concrete commands from the tech stack in `docs/PRD.md` §1.1. Do not invent a toolchain that contradicts the PRD. Downstream writer agents must **auto-discover** this manifest — keep the title and field labels below stable.
+Derive concrete commands from the tech stack in `docs/features/{feature}/PRD.md` §1.1. Do not invent a toolchain that contradicts the PRD. Downstream writer agents must **auto-discover** this manifest — keep the title and field labels below stable.
 
 ````markdown
 # Local Project Environment & Commands
@@ -151,21 +158,36 @@ Derive concrete commands from the tech stack in `docs/PRD.md` §1.1. Do not inve
 - **Service Identifier**: {service-name}
 - **Tech Stack**: {Derived from PRD §1.1}
 
+## Toolchain Prerequisites
+- **Runtime**: {Exact runtime version, e.g. JDK 21 / Python 3.11}
+- **Environment Variables**: {e.g. JAVA_HOME="..."}
+- **Daemon Requirements**: {e.g. Docker Daemon running}
+
+## Preflight Verification Command
+- **Preflight Check**: `python python-runtime/preflight_check.py`
+
 ## Execution Commands
-- **Compile / Build Check**: {Exact command, e.g. ./gradlew compileJava}
-- **Run All Tests**: {Exact command, e.g. ./gradlew test}
-- **Run Single Test**: {Exact command, e.g. ./gradlew test --tests "{test_class}"}
-- **Database Migration**: {Exact command, e.g. ./gradlew flywayMigrate}
+- **Compile / Build Check**: {Exact command, e.g. .\gradlew.bat compileKotlin}
+- **Unit / Slice Test**: {Exact command, e.g. .\gradlew.bat test}
+- **Integration / E2E Test**: {Exact command, e.g. .\gradlew.bat test --tests "*IntegrationTest"}
+- **Run Single Test**: {Exact command, e.g. .\gradlew.bat test --tests "{test_class}"}
+- **Database Migration**: {Exact command, e.g. .\gradlew.bat flywayMigrate}
+
+## Pre-Approved Command Allowlist
+- `{command 1}`
+- `{command 2}`
+- `{command 3}`
 ````
 
 ---
 
 ## 7. DEFINITION OF DONE
-1. `docs/PRD.md` analyzed; only `Scope: [TARGET]` processed (`[BACKLOG]` fully ignored).
+1. `docs/features/{feature}/PRD.md` analyzed; only `Scope: [TARGET]` processed (`[BACKLOG]` fully ignored).
 2. Communication pattern, interaction semantics, and schemas derived dynamically from PRD context with zero hardcoded protocol assumptions.
 3. Zero-guessing enforced: any missing business rules escalated and resolved with the user.
 4. All `[AI-ASSUMPTION]` tags propagated with `[Attention Needed for Implementer]`.
-5. Finalized specification persisted at `docs/features/{feature}/SPEC.md`.
+5. Finalized specification persisted at `docs/features/{feature}/SPEC.md`, including `## Applicable Technical Standards` declaring Layer Meta-Standards and Technology Slots from `.ai/guidelines/`.
 6. All state mutations, persistence updates, and side-effects/events explicitly detailed in Section 2.2 for QA test coverage.
-7. Файл `docs/PROJECT_ENV.md` успешно создан/обновлен на основе выбранного стека из `docs/PRD.md` §1.1 и содержит актуальные команды сборки, тестирования и миграций.
-8. Раздел `## Infrastructure & Environment Manifest` полностью оформлен внутри `SPEC.md` по всем 4 обязательным пунктам для передачи агенту `environment-bootstrap`.
+7. Файл `docs/PROJECT_ENV.md` успешно создан/обновлен на основе выбранного стека из `docs/features/{feature}/PRD.md` §1.1 и содержит актуальные команды сборки, тестирования, миграций, секцию Prerequisites и `Pre-Approved Command Allowlist`.
+8. Раздел `## Infrastructure & Environment Manifest` полностью оформлен внутри `SPEC.md` по всем обязательным пунктам для передачи агенту `environment-bootstrap` (включая версионированные Docker-шаблоны и healthchecks).
+
