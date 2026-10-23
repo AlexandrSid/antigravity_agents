@@ -23,6 +23,11 @@ This repository is not centered on one application or framework. Its primary pro
 - immutable test boundaries that prevent agents from making tests pass by weakening them;
 - explicit environment manifests that prevent guessed build and execution commands;
 - integration gates that distinguish application defects from harness and external infrastructure failures;
+- stateless execution and context isolation (clean-start invocation strictly from role + step inputs + prompt);
+- bounded tool shells with programmatic write scope enforcement;
+- dynamic TDD quality gates with automated Git checkpoints and self-correction rollbacks;
+- dual-mode orchestration: subscription-first In-IDE execution and headless standalone Python CLI runtime;
+- cross-environment state tracking (`PIPELINE_STATE.md`) and cost/token telemetry (`EXECUTION_TRACE.json`);
 - human-readable summaries kept separate from machine-authoritative sources.
 
 ### Why the `main` branch exists
@@ -49,17 +54,33 @@ That experiment produced:
 
 The MVP is evidence used to evaluate the process. The reusable multi-agent development workflow is the main result.
 
-Future stages may live in additional branches as new orchestration approaches, agent roles, and software-development scenarios are explored.
+#### `stage_2_improvements` — Orchestrator Core, context isolation, and framework refactoring
+
+Stage 2 transformed the manual multi-agent prototype into an automated, dual-mode orchestration system and validated it against a polyglot technology stack.
+
+That stage produced:
+
+- **Dual-mode orchestration engine**: In-IDE orchestrator adapters (`.antigravity/orchestrator.md`, `.cursor/rules/orchestrator.md`, `.windsurfrules`, `CLAUDE.md`, and `.agents/skills/sdlc-orchestrator/`) working natively on subscription tokens, alongside an autonomous Python toolchain (`python-runtime/`) for headless CI/CD and local LLMs (Ollama / LM Studio);
+- **Stateless context isolation**: each agent invocation is executed in a dedicated, clean context window constructed strictly from its role contract, declared step input artifacts, and prompt;
+- **Bounded Tool Shell & Write Scope enforcement**: strict programmatic checks on every file write (`python-runtime/tool_shell.py`), rejecting any writes outside an agent's assigned scope;
+- **Dynamic TDD Quality Gates & Git checkpoints**: dynamic discovery of verification commands from `docs/PROJECT_ENV.md` (`gate_runner.py`), TDD Red/Green verification, automatic `git reset --hard` rollbacks upon failures, and self-correction loops with error logs (`git_engine.py`);
+- **Unified Pipeline State & Observability**: cross-environment resume protocol (`docs/features/{feature}/PIPELINE_STATE.md`) and granular execution/cost tracing (`docs/features/{feature}/EXECUTION_TRACE.json`);
+- **Layer Meta-Standards & Technology Slots**: modular engineering standards library under `.ai/guidelines/<layer>/` (9 architectural layers: architecture, languages, testing, persistence, infrastructure, environment, documentation, messaging, caching);
+- **Polyglot End-to-End Validation (Link Shortener service)**: a complete Greenfield microservice built with Java 21, Quarkus 3.x, PostgreSQL, Redis, Flyway, and RestAssured under Docker Compose, proving framework independence from Spring Boot.
 
 ### Repository map for human readers
 
-- `.ai/rules/` — contracts for specialized agents;
-- `.ai/pipelines/` — SDLC orchestration protocols and pipeline definitions;
-- `.ai/agents-config.md` — abstract LLM profile routing;
-- `.ai/guidelines/` — shared engineering constraints;
+- `.ai/rules/` — contracts and write-scope definitions for specialized agents;
+- `.ai/pipelines/` — SDLC orchestration protocols and pipeline definitions (SSOT);
+- `.ai/agents-config.md` — abstract LLM profile routing (`REASONING_HEAVY`, `STRICT_CODEGEN`, `FAST_EXECUTION`);
+- `.ai/guidelines/` — modular engineering meta-standards and technology slots;
+- `python-runtime/` — standalone CLI orchestration toolchain (runner, gate runner, git engine, tool shell, pipeline parser);
+- `.antigravity/`, `.agents/skills/`, `.cursor/`, `CLAUDE.md` — IDE-specific orchestration rules and adapters;
 - `control-panel/` — user control panel: interactive launcher (`run.py`, shortcuts) and operator manual ([`control-panel/HOW_TO.md`](control-panel/HOW_TO.md));
-- `docs/` — product, feature, environment, planning, and experiment artifacts;
-- `stage1_mvp` branch — the first complete validation experiment.
+- `docs/` — feature artifacts isolated under `docs/features/{feature}/` (`PRD.md`, `SPEC.md`, `TDD_PLAN.md`, `INTEGRATION_REPORT.md`, `SUMMARY.md`, `PIPELINE_STATE.md`) and project environment manifests (`docs/PROJECT_ENV.md`);
+- `ROADMAP.md` — phased project roadmap, architectural vision, and engineering invariants;
+- `stage1_mvp` branch — the first complete validation experiment (User Service on Spring Boot);
+- `stage_2_improvements` branch — autonomous dual-mode orchestrator core and second validation (Link Shortener on Quarkus).
 
 This README is only an introduction. It is not an operational manual or a technical specification. For practical launch instructions and operator workflows, refer to [`control-panel/HOW_TO.md`](control-panel/HOW_TO.md) or launch the interactive control panel with `python control-panel/run.py` (or `control-panel\run` on Windows).
 
@@ -88,6 +109,11 @@ Anti-Gravity Agents — экспериментальная среда для п�
 - неизменяемые границы тестов, не позволяющие агентам получать зелёный результат ослаблением проверок;
 - явные манифесты окружения, исключающие угадывание команд сборки и запуска;
 - интеграционные контрольные этапы, разделяющие дефекты приложения, испытательного стенда и внешней инфраструктуры;
+- бессостоятельное выполнение и изоляция контекстов (чистый старт строго из контракта роли + входных артефактов шага + точного промпта);
+- ограниченный Bounded Tool Shell с программным контролем границ записи (Write Scope);
+- динамические TDD-контрольные этапы (Quality Gates) с автофиксацией чекпоинтов Git и откатом при сбоях;
+- двухрежимная оркестрация: работа внутри AI-IDE на нативных токенах подписки (Subscription-First) и автономный консольный Python-рантайм;
+- межсредовое управление состоянием (`PIPELINE_STATE.md`) и посессионный аудит затрат и токенов (`EXECUTION_TRACE.json`);
 - отделение человекочитаемых сводок от авторитетных машинных источников.
 
 ### Для чего существует ветка `main`
@@ -114,16 +140,32 @@ Anti-Gravity Agents — экспериментальная среда для п�
 
 MVP служит доказательством для оценки процесса. Главным результатом является переиспользуемая мультиагентная система разработки.
 
-Будущие стадии могут размещаться в дополнительных ветках по мере исследования новых подходов к оркестрации, ролей агентов и сценариев разработки.
+#### `stage_2_improvements` — Ядро оркестратора, изоляция контекстов и рефакторинг фреймворка
+
+В Stage 2 ручной мультиагентный прототип преобразован в автоматизированную двухрежимную систему оркестрации и валидирован на альтернативном технологическом стеке.
+
+В результате появились:
+
+- **Двухрежимное ядро оркестрации**: встроенные IDE-адаптеры (`.antigravity/orchestrator.md`, `.cursor/rules/orchestrator.md`, `.windsurfrules`, `CLAUDE.md`, `.agents/skills/sdlc-orchestrator/`), работающие на нативных токенах подписки текущей среды, и автономный консольный Python-инструментарий (`python-runtime/`) для headless-запуска в CI/CD и локальных LLM (Ollama / LM Studio);
+- **Бессостоятельная изоляция контекста (Stateless Execution)**: каждый вызов субагента выполняется в изолированном контекстном окне строго из роли, входных артефактов и целевого промпта;
+- **Bounded Tool Shell и контроль Write Scope**: строгий программный перехват файловых операций (`python-runtime/tool_shell.py`) с блокировкой любых попыток записи вне разрешённых границ роли;
+- **Динамические Quality Gates и Git-чекпоинты**: автоматическое извлечение команд верификации из `docs/PROJECT_ENV.md` (`gate_runner.py`), TDD-семантика проверок Red/Green, автоматический откат `git reset --hard` при сбоях и цикл самоисправления с передачей логов ошибок (`git_engine.py`);
+- **Единый протокол состояния и наблюдаемость**: кросс-средовый протокол возобновления (`docs/features/{feature}/PIPELINE_STATE.md`) и детальный аудит времени, токенов и расчетной стоимости (`docs/features/{feature}/EXECUTION_TRACE.json`);
+- **Слоевые мета-стандарты и технологические слоты**: модульная библиотека инженерных регламентов `.ai/guidelines/<layer>/` (9 слоёв: архитектура, языки, тестирование, персистентность, инфраструктура, среда, документация, обмен сообщениями, кэширование);
+- **Полиглотная сквозная валидация (сервис Link Shortener)**: микросервис полного цикла на Java 21, Quarkus 3.x, PostgreSQL, Redis, Flyway и RestAssured под Docker Compose, доказавший независимость фреймворка от Spring Boot.
 
 ### Карта репозитория для людей
 
-- `.ai/rules/` — контракты специализированных агентов;
-- `.ai/pipelines/` — протоколы SDLC-оркестрации и реестр пайплайнов;
-- `.ai/agents-config.md` — маршрутизация абстрактных профилей LLM;
-- `.ai/guidelines/` — общие инженерные ограничения;
+- `.ai/rules/` — контракты специализированных агентов и границы записи (Write Scope);
+- `.ai/pipelines/` — протоколы SDLC-оркестрации и реестр пайплайнов (SSOT);
+- `.ai/agents-config.md` — маршрутизация абстрактных профилей LLM (`REASONING_HEAVY`, `STRICT_CODEGEN`, `FAST_EXECUTION`);
+- `.ai/guidelines/` — модульные инженерные мета-стандарты и технологические слоты;
+- `python-runtime/` — автономный консольный инструментарий оркестрации (runner, gate runner, git engine, tool shell, pipeline parser);
+- `.antigravity/`, `.agents/skills/`, `.cursor/`, `CLAUDE.md` — правила и адаптеры оркестрации под конкретные IDE;
 - `control-panel/` — панель управления оператора: единый лаунчер (`run.py`, ярлыки) и руководство ([`control-panel/HOW_TO.md`](control-panel/HOW_TO.md));
-- `docs/` — продуктовые, функциональные, средовые, плановые и экспериментальные артефакты;
-- ветка `stage1_mvp` — первый полный проверочный эксперимент.
+- `docs/` — изолированные артефакты фич в `docs/features/{feature}/` (`PRD.md`, `SPEC.md`, `TDD_PLAN.md`, `INTEGRATION_REPORT.md`, `SUMMARY.md`, `PIPELINE_STATE.md`) и общепроектные манифесты среды (`docs/PROJECT_ENV.md`);
+- `ROADMAP.md` — поэтапный roadmap проекта, архитектурное видение и инженерные инварианты;
+- ветка `stage1_mvp` — первый полный проверочный эксперимент (User Service на Spring Boot);
+- ветка `stage_2_improvements` — автономное ядро двухрежимной оркестрации и вторая валидация (Link Shortener на Quarkus).
 
 Этот README является только введением. Он не является операционным регламентом или технической спецификацией. Подробные инструкции по запуску и все флаги команд приведены в [`control-panel/HOW_TO.md`](control-panel/HOW_TO.md); быстрый интерактивный старт доступен командой `python control-panel/run.py` (или `control-panel\run` на Windows).
